@@ -1,5 +1,6 @@
 package com.efub.agodaclone.accomodation.domain;
 
+import com.efub.agodaclone.room.domain.Room;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class Accomodation {
 
     private int star;
     private String address;
+    private String location;
     private int price;
 
     @Lob

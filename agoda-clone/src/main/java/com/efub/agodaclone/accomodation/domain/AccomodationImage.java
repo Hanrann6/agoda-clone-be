@@ -18,5 +18,5 @@ public class AccomodationImage {
     private Accomodation accomodation;
 
     @Column(name = "accomodation_img")
-    private String accomodationImg;
+    private String imgUrl;
 }
