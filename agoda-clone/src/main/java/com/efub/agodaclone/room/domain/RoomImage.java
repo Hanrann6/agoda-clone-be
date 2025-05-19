@@ -15,7 +15,7 @@ public class RoomImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
-    private Long roomId;
+    private Room room;
 
     @Column(name = "room_img")
     private String imgUrl;
