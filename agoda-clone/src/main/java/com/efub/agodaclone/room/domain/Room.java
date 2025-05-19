@@ -1,6 +1,6 @@
 package com.efub.agodaclone.room.domain;
 
-import com.efub.agodaclone.accomodation.domain.Accomodation;
+import com.efub.agodaclone.accomodation.domain.Accommodation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,10 +18,10 @@ public class Room {
     private Long roomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accomodation_id")
-    private Accomodation accomodation;
+    @JoinColumn(name = "accommodation_id")
+    private Accommodation accommodation;
 
-    @OneToMany(mappedBy = "room_img", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomImage> roomImageList = new ArrayList<>();
 
     @Column(name = "room_type")
