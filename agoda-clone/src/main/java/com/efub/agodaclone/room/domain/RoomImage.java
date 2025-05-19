@@ -1,4 +1,4 @@
-package com.efub.agodaclone.accomodation.domain;
+package com.efub.agodaclone.room.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,5 +18,5 @@ public class RoomImage {
     private Long roomId;
 
     @Column(name = "room_img")
-    private String roomImg;
+    private String imgUrl;
 }

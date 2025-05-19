@@ -1,5 +1,6 @@
-package com.efub.agodaclone.accomodation.domain;
+package com.efub.agodaclone.room.domain;
 
+import com.efub.agodaclone.accomodation.domain.Accomodation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,5 +18,8 @@ public class Room {
     @JoinColumn(name = "accomodation_id")
     private Accomodation accomodation;
 
-    private String roomType = "슈페리어 트윈";
+    @Column(name = "room_type")
+    private String roomType;
+
+    private String bed;
 }
