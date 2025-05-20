@@ -1,0 +1,16 @@
+package com.efub.agodaclone.global.exception;
+
+public enum ClientExceptionCode {
+    INTERNAL_SERVER_ERROR,
+    ILLEGAL_ARGUMENT,
+    UNAUTHORIZED,
+    RESOURCE_NOT_FOUND,
+    DUPLICATE_RESERVATION,
+    INVALID_PAGE,
+    NO_REVIEW_RATING,
+    ACCESS_TOKEN_EMPTY,
+    REFRESH_TOKEN_EMPTY,
+    NO_IMAGE_ERROR,
+    UNAUTH_ERROR,
+    OAUTH_SERVER_ERROR
+}
