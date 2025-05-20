@@ -7,16 +7,16 @@ import lombok.NoArgsConstructor;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AccomodationImage {
+public class AccommodationImage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "accomodation_img_id")
-    private Long accomodationImgId;
+    @Column(name = "accommodation_img_id")
+    private Long accommodationImgId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accomodation_id")
-    private Accomodation accomodation;
+    @JoinColumn(name = "accommodation_id")
+    private Accommodation accommodation;
 
-    @Column(name = "accomodation_img")
+    @Column(name = "accommodation_img")
     private String imgUrl;
 }

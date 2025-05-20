@@ -11,11 +11,11 @@ import java.util.List;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Accomodation {
+public class Accommodation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "accomodation_id")
-    private Long accomodationId;
+    @Column(name = "accommodation_id")
+    private Long accommodationId;
 
     @Column(name = "kor_name")
     private String korName;
@@ -46,15 +46,15 @@ public class Accomodation {
     @Column(name = "location_score")
     private double locationScore;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> roomList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "accomodation_img", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AccomodationImage> accomodationImageList = new ArrayList<>();
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccommodationImage> accommodationImageList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "provision_tag", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<ProvisionTag> provisionTagList = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Review> reviewList = new ArrayList<>();
  }
