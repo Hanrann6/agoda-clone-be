@@ -12,3 +12,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+cors:
+  allow-origins:
+    - "http://localhost:5173"
+    - "http://localhost:8080"
