@@ -31,7 +31,7 @@ public class Review extends BaseEntity {
     @Column(name = "location_score", nullable = false)
     private int locationScore;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
