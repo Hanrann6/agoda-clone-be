@@ -1,5 +1,6 @@
 package com.efub.agodaclone.accomodation.domain;
 
+import com.efub.agodaclone.reservation.domain.Reservation;
 import com.efub.agodaclone.room.domain.Room;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -55,6 +56,6 @@ public class Accommodation {
 //    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<ProvisionTag> provisionTagList = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Review> reviewList = new ArrayList<>();
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reservation> reservationList = new ArrayList<>();
  }
