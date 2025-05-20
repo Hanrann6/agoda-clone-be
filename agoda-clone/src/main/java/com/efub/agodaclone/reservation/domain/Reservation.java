@@ -33,8 +33,8 @@ public class Reservation {
     @JoinColumn(name = "accommodation_id")
     private Accommodation accommodation;
 
-//    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Review> reviewList = new ArrayList<>();
+//    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Review review;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
