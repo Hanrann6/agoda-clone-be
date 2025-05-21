@@ -39,8 +39,7 @@ public class AccommodationService {
 
     // 숙소 상세 정보 조회
     public AccommodationDetailResponseDto getDetailedAccommodation(Long accommodationId){
-        Accommodation accommodation = accommodationRepository.findByAccommodationId(accommodationId)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 숙소입니다."));
+        Accommodation accommodation = findAccommodationById(accommodationId);
         Room room = findRoom(accommodation);
         int reviewCount = getReviewCount(accommodationId);
         int discountPrice = calculateDiscountPrice(accommodation.getPrice(), accommodation.getDiscountRate());
@@ -48,10 +47,16 @@ public class AccommodationService {
         return AccommodationDetailResponseDto.from(accommodation, room, reviewCount, discountPrice);
     }
 
-    // 숙소 객실 조회하는 함수
+    // 숙소로 객실 조회하는 함수
     public Room findRoom(Accommodation accommodation){
         return roomRepository.findByAccommodation(accommodation)
                 .orElseThrow(()-> new IllegalArgumentException("방이 존재하지 않습니다."));
+    }
+
+    // 숙소 ID로 숙소 조회하는 함수
+    public Accommodation findAccommodationById(Long accommodationId){
+        return accommodationRepository.findByAccommodationId(accommodationId)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 숙소입니다."));
     }
 
     // 숙박하는 일 수 계산하는 함수
