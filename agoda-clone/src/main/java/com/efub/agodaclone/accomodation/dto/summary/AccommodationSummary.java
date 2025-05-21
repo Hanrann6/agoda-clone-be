@@ -15,7 +15,7 @@ public class AccommodationSummary {
     private String korName;
     private String engName;
     private int star;
-    private List<String> accommodationImgList;
+    private String accommodationImg;
     private String location;
     private double totalScore;
     private int reviewCount;
@@ -25,15 +25,12 @@ public class AccommodationSummary {
     private List<String> provisionTagList;
 
     public static AccommodationSummary from(Accommodation accommodation, int reviewCount, int discountPrice, int days) {
-        Room room = accommodation.getRoomList().get(0); // 객실 1개만 사용
+        AccommodationImage accommodationImage = accommodation.getAccommodationImageList().get(0); // 대표 이미지 1개만 사용
         return AccommodationSummary.builder()
                 .korName(accommodation.getKorName())
                 .engName(accommodation.getEngName())
                 .star(accommodation.getStar())
-                .accommodationImgList(accommodation.getAccommodationImageList().stream()
-                        .map(AccommodationImage::getImgUrl)
-                        .collect(Collectors.toList())
-                )
+                .accommodationImg(accommodationImage.getImgUrl())
                 .location(accommodation.getLocation())
                 .totalScore(accommodation.getTotalScore())
                 .reviewCount(reviewCount)
