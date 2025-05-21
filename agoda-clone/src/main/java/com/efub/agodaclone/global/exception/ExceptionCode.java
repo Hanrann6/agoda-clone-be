@@ -12,6 +12,8 @@ public enum ExceptionCode {
             "잘못된 인자입니다."),
     INVALID_PAGE(HttpStatus.BAD_REQUEST, ClientExceptionCode.INVALID_PAGE,
             "요청한 페이지 번호는 0 이상의 정수여야 합니다."),
+    INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, ClientExceptionCode.INVALID_DATE_RANGE,
+            "체크아웃 날짜는 체크인 날짜 이후로 설정해주세요."),
 
     //Auth
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, ClientExceptionCode.UNAUTH_ERROR,
