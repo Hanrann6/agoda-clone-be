@@ -29,9 +29,17 @@ public class AccommodationService {
     private final ReviewRepository reviewRepository;
 
     // 숙소 검색 리스트
-    public AccommodationSearchListResponseDto getAccommodationList(String query, LocalDate startDate, LocalDate endDate, int page){
+    public AccommodationSearchListResponseDto getAccommodationList(String query, LocalDate startDate, LocalDate endDate, int minPrice, int maxPrice, int page){
+        if (page < 0) {
+            throw new AgodaException(ExceptionCode.INVALID_PAGE);
+        }
+        if (startDate.isAfter(endDate)) {
+            throw new AgodaException(ExceptionCode.INVALID_DATE_RANGE);
+        }
+
         Pageable pageable = PageRequest.of(page, 8);
-        Page<Accommodation> accommodationList = accommodationRepository.findByLocationContaining(query, pageable);
+        Page<Accommodation> accommodationList = accommodationRepository.findByLocationContainingAndPriceBetween(query, minPrice, maxPrice, pageable);
+
         int totalPages = accommodationList.getTotalPages();
         int totalCount = (int) accommodationList.getTotalElements();
         int days = getDays(startDate, endDate);
