@@ -1,6 +1,7 @@
 package com.efub.agodaclone.user.service;
 
 import com.efub.agodaclone.user.domain.CustomUserDetails;
+import com.efub.agodaclone.user.domain.KakaoUserInfo;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,23 @@ public class UserService {
 //        return userRepository.findByKakaoId(kakaoId)
 //                .orElseGet(() -> registerKakaoUser(kakaoId, email, name));
 //    }
+
+    public User registerOrLogin(KakaoUserInfo kakaoUserInfo) {
+        String kakaoId = String.valueOf(kakaoUserInfo.getId());
+        Optional<User> userOptional = userRepository.findByKakaoId(kakaoId);
+
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            User newUser = User.builder()
+                    .kakaoId(kakaoId)
+                    .email(kakaoUserInfo.getKakaoAccount().getEmail())
+                    .name(kakaoUserInfo.getKakaoAccount().getProfile().getNickname())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            return userRepository.save(newUser);
+        }
+    }
 
     @Transactional(readOnly = true)
     public User getCurrentUser() {

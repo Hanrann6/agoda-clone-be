@@ -1,8 +1,10 @@
 package com.efub.agodaclone.user.domain;
 
 import com.efub.agodaclone.reservation.domain.Reservation;
+import com.efub.agodaclone.review.domain.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,5 +35,13 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
+
+    @Builder
+    public User(String kakaoId, String email, String name, LocalDateTime createdAt) {
+        this.kakaoId = kakaoId;
+        this.email = email;
+        this.name = name;
+        this.createdAt = createdAt;
+    }
 
 }
