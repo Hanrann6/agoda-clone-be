@@ -12,5 +12,6 @@ public enum ClientExceptionCode {
     REFRESH_TOKEN_EMPTY,
     NO_IMAGE_ERROR,
     UNAUTH_ERROR,
-    OAUTH_SERVER_ERROR
+    OAUTH_SERVER_ERROR,
+    INVALID_DATE_RANGE
 }
