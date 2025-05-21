@@ -38,6 +38,7 @@ public class ReservationService {
     }
 
     // 나의 예약 전체 조회
+    @Transactional(readOnly = true)
     public ReservationListResponseDto searchUpcomingReservations() {
         User findUser = userService.getCurrentUser(); // 현재 로그인된 유저 찾아오기
         List<Reservation> reservations = reservationRepository.findAllByUserOrderByStartDateAsc(findUser);
