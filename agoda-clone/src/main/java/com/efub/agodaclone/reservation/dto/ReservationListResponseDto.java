@@ -20,7 +20,7 @@ public class ReservationListResponseDto {
     public static class SingleReservation {
         private Long reservationId;
         private String korName;
-        private String accommodationImg;
+        private String accommodationImage;
         private String location;
         private LocalDate startDate;
         private LocalDate endDate;
@@ -31,7 +31,7 @@ public class ReservationListResponseDto {
             return SingleReservation.builder()
                     .reservationId(reservation.getReservationId())
                     .korName(reservation.getAccommodation().getKorName())
-                    .accommodationImg(accommodationImage.getImgUrl())
+                    .accommodationImage(accommodationImage.getImgUrl())
                     .location(reservation.getAccommodation().getLocation())
                     .startDate(reservation.getStartDate())
                     .endDate(reservation.getEndDate())

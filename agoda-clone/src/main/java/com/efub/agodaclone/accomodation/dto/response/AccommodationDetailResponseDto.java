@@ -21,13 +21,13 @@ public class AccommodationDetailResponseDto {
     private double totalScore;
     private int reviewCount;
     private String description;
-    private List<String> accommodationImage;
+    private List<String> accommodationImages;
     private String roomType;
     private String bed;
-    private List<String> roomImage;
+    private List<String> roomImages;
     private int price;
     private int discountPrice;
-    private List<String> provisionTag;
+    private List<String> provisionTags;
     private double cleanlinessScore;
     private double serviceScore;
     private double locationScore;
@@ -40,18 +40,18 @@ public class AccommodationDetailResponseDto {
                 .totalScore(accommodation.getTotalScore())
                 .reviewCount(reviewCount)
                 .description(accommodation.getDescription())
-                .accommodationImage(accommodation.getAccommodationImageList().stream()
+                .accommodationImages(accommodation.getAccommodationImageList().stream()
                                 .map(AccommodationImage::getImgUrl)
                                 .collect(Collectors.toList())
                 )
                 .roomType(room.getRoomType())
                 .bed(room.getBed())
-                .roomImage(room.getRoomImageList().stream()
+                .roomImages(room.getRoomImageList().stream()
                         .map(RoomImage::getImgUrl)
                         .collect(Collectors.toList()))
                 .price(accommodation.getPrice())
                 .discountPrice(discountPrice)
-                .provisionTag(accommodation.getProvisionTagList().stream()
+                .provisionTags(accommodation.getProvisionTagList().stream()
                         .map(tag -> tag.getTagName().getLabel())
                         .collect(Collectors.toList())
                 )

@@ -15,7 +15,7 @@ public class AccommodationSummary {
     private String korName;
     private String engName;
     private int star;
-    private String imageUrl;
+    private String accommodationImage;
     private String location;
     private double totalScore;
     private int reviewCount;
@@ -30,7 +30,7 @@ public class AccommodationSummary {
                 .korName(accommodation.getKorName())
                 .engName(accommodation.getEngName())
                 .star(accommodation.getStar())
-                .imageUrl(accommodationImage.getImgUrl())
+                .accommodationImage(accommodationImage.getImgUrl())
                 .location(accommodation.getLocation())
                 .totalScore(accommodation.getTotalScore())
                 .reviewCount(reviewCount)
