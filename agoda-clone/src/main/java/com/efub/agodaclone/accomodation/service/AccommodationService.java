@@ -34,7 +34,7 @@ public class AccommodationService {
         int totalCount = (int) accommodationList.getTotalElements();
         int days = getDays(startDate, endDate);
 
-        return AccommodationSearchListResponseDto.from(accommodationList, page, totalPages, totalCount, days, this::calculateDiscountPrice, reviewRepository);
+        return AccommodationSearchListResponseDto.from(accommodationList, page, totalPages, totalCount, days, this::calculateDiscountPrice, this::getReviewCount);
     }
 
     // 숙소 상세 정보 조회
@@ -42,7 +42,7 @@ public class AccommodationService {
         Accommodation accommodation = accommodationRepository.findByAccommodationId(accommodationId)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 숙소입니다."));
         Room room = findRoom(accommodation);
-        int reviewCount = reviewRepository.countByAccommodationId(accommodationId);
+        int reviewCount = getReviewCount(accommodationId);
         int discountPrice = calculateDiscountPrice(accommodation.getPrice(), accommodation.getDiscountRate());
 
         return AccommodationDetailResponseDto.from(accommodation, room, reviewCount, discountPrice);
@@ -60,7 +60,12 @@ public class AccommodationService {
     }
 
     // 할인 후 금액 계산하는 함수
-    private int calculateDiscountPrice(int price, int discountRate) {
+    private int calculateDiscountPrice(int price, int discountRate){
         return (int) (price * (1 - discountRate / 100.0));
+    }
+
+    // 숙소 리뷰 개수 반환하는 함수
+    private int getReviewCount(Long accommodationId){
+        return reviewRepository.countByAccommodationId(accommodationId);
     }
 }
