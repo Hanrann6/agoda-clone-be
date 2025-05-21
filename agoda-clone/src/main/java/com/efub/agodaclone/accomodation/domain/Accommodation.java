@@ -53,9 +53,9 @@ public class Accommodation {
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccommodationImage> accommodationImageList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProvisionTag> provisionTagList = new ArrayList<>();
-//
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProvisionTag> provisionTagList = new ArrayList<>();
+
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservationList = new ArrayList<>();
  }

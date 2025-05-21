@@ -1,7 +1,7 @@
 package com.efub.agodaclone.accomodation.service;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
-import com.efub.agodaclone.accomodation.dto.request.AccommodationSearchRequestDto;
+import com.efub.agodaclone.review.repository.ReviewRepository;
 import com.efub.agodaclone.room.domain.Room;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationDetailResponseDto;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResponseDto;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +24,7 @@ public class AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
     private final RoomRepository roomRepository;
+    private final ReviewRepository reviewRepository;
 
     // 숙소 검색 리스트
     public AccommodationSearchListResponseDto getAccommodationList(String query, LocalDate startDate, LocalDate endDate, int page){
@@ -34,22 +34,23 @@ public class AccommodationService {
         int totalCount = (int) accommodationList.getTotalElements();
         int days = getDays(startDate, endDate);
 
-        return AccommodationSearchListResponseDto.from(accommodationList, page, totalPages, totalCount, days, this::calculateDiscountPrice);
+        return AccommodationSearchListResponseDto.from(accommodationList, page, totalPages, totalCount, days, this::calculateDiscountPrice, this::getReviewCount);
     }
 
     // 숙소 상세 정보 조회
-    public AccommodationDetailResponseDto getDetailedAccommodation(Long accomodationId){
-        Accommodation accommodation = accommodationRepository.findByAccommodationId(accomodationId)
+    public AccommodationDetailResponseDto getDetailedAccommodation(Long accommodationId){
+        Accommodation accommodation = accommodationRepository.findByAccommodationId(accommodationId)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 숙소입니다."));
-        Room room = findByAccommodationId(accomodationId);
+        Room room = findRoom(accommodation);
+        int reviewCount = getReviewCount(accommodationId);
         int discountPrice = calculateDiscountPrice(accommodation.getPrice(), accommodation.getDiscountRate());
 
-        return AccommodationDetailResponseDto.from(accommodation, room, discountPrice);
+        return AccommodationDetailResponseDto.from(accommodation, room, reviewCount, discountPrice);
     }
 
-    // 숙소 id로 객실 조회하는 함수
-    public Room findByAccommodationId(Long accommodationId){
-        return roomRepository.findByAccommodationId(accommodationId)
+    // 숙소 객실 조회하는 함수
+    public Room findRoom(Accommodation accommodation){
+        return roomRepository.findByAccommodation(accommodation)
                 .orElseThrow(()-> new IllegalArgumentException("방이 존재하지 않습니다."));
     }
 
@@ -58,8 +59,13 @@ public class AccommodationService {
         return (int) ChronoUnit.DAYS.between(startDate, endDate);
     }
 
-    //
-    private int calculateDiscountPrice(int price, int discountRate) {
+    // 할인 후 금액 계산하는 함수
+    private int calculateDiscountPrice(int price, int discountRate){
         return (int) (price * (1 - discountRate / 100.0));
+    }
+
+    // 숙소 리뷰 개수 반환하는 함수
+    private int getReviewCount(Long accommodationId){
+        return reviewRepository.countByAccommodationId(accommodationId);
     }
 }

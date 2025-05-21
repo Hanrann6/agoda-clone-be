@@ -3,6 +3,7 @@ package com.efub.agodaclone.accomodation.dto.response;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
 import com.efub.agodaclone.accomodation.domain.AccommodationImage;
+import com.efub.agodaclone.accomodation.domain.ProvisionTag;
 import com.efub.agodaclone.room.domain.Room;
 import com.efub.agodaclone.room.domain.RoomImage;
 import lombok.Builder;
@@ -16,6 +17,7 @@ public class AccommodationDetailResponseDto {
 
     private String korName;
     private String engName;
+    private String address;
     private double totalScore;
     private int reviewCount;
     private String description;
@@ -24,17 +26,19 @@ public class AccommodationDetailResponseDto {
     private String bed;
     private List<String> roomImage;
     private int price;
-//    private List<String> provisionTagList;
+    private int discountPrice;
+    private List<String> provisionTagList;
     private double cleanlinessScore;
     private double serviceScore;
     private double locationScore;
 
-    public static AccommodationDetailResponseDto from(Accommodation accommodation, Room room, int discountPrice) {
+    public static AccommodationDetailResponseDto from(Accommodation accommodation, Room room, int reviewCount, int discountPrice) {
         return AccommodationDetailResponseDto.builder()
                 .korName(accommodation.getKorName())
                 .engName(accommodation.getEngName())
+                .address(accommodation.getAddress())
                 .totalScore(accommodation.getTotalScore())
-//                .reviewCount(accommodation.getReviewList.size())
+                .reviewCount(reviewCount)
                 .description(accommodation.getDescription())
                 .accommodationImgList(accommodation.getAccommodationImageList().stream()
                                 .map(AccommodationImage::getImgUrl)
@@ -45,11 +49,12 @@ public class AccommodationDetailResponseDto {
                 .roomImage(room.getRoomImageList().stream()
                         .map(RoomImage::getImgUrl)
                         .collect(Collectors.toList()))
-                .price(discountPrice)
-//                .provisionTag(accommodation.getProvisionTags().stream()
-//                        .map(ProvisionTag::getName)
-//                        .collect(Collectors.toList())
-//                )
+                .price(accommodation.getPrice())
+                .discountPrice(discountPrice)
+                .provisionTagList(accommodation.getProvisionTagList().stream()
+                        .map(tag -> tag.getTagName().getLabel())
+                        .collect(Collectors.toList())
+                )
                 .cleanlinessScore(accommodation.getCleanlinessScore())
                 .serviceScore(accommodation.getServiceScore())
                 .locationScore(accommodation.getLocationScore())

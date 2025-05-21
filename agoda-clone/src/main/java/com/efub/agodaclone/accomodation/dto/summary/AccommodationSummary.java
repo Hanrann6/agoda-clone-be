@@ -1,8 +1,8 @@
 package com.efub.agodaclone.accomodation.dto.summary;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
+import com.efub.agodaclone.accomodation.domain.AccommodationImage;
 import com.efub.agodaclone.room.domain.Room;
-import com.efub.agodaclone.room.domain.RoomImage;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,44 +14,36 @@ public class AccommodationSummary {
 
     private String korName;
     private String engName;
+    private int star;
+    private List<String> accommodationImgList;
+    private String location;
     private double totalScore;
     private int reviewCount;
-    private String description;
-    //    private List<String> provisionTagList;
-
-    private String roomType;
-    private String bed;
-    private List<String> roomImages;
-
+    private int price;
     private int discountPrice;
     private int totalPrice;
+    private List<String> provisionTagList;
 
-    private double cleanlinessScore;
-    private double serviceScore;
-    private double locationScore;
-
-    public static AccommodationSummary from(Accommodation accommodation, int discountPrice, int days) {
+    public static AccommodationSummary from(Accommodation accommodation, int reviewCount, int discountPrice, int days) {
         Room room = accommodation.getRoomList().get(0); // 객실 1개만 사용
         return AccommodationSummary.builder()
                 .korName(accommodation.getKorName())
                 .engName(accommodation.getEngName())
+                .star(accommodation.getStar())
+                .accommodationImgList(accommodation.getAccommodationImageList().stream()
+                        .map(AccommodationImage::getImgUrl)
+                        .collect(Collectors.toList())
+                )
+                .location(accommodation.getLocation())
                 .totalScore(accommodation.getTotalScore())
-//                .reviewCount(accommodation.getReviewList().size())
-                .description(accommodation.getDescription())
-//                .provisionTag(accommodation.getProvisionTags().stream()
-//                        .map(ProvisionTag::getName)
-//                        .collect(Collectors.toList())
-//                )
-                .roomType(room.getRoomType())
-                .bed(room.getBed())
-                .roomImages(room.getRoomImageList().stream()
-                        .map(RoomImage::getImgUrl)
-                        .collect(Collectors.toList()))
+                .reviewCount(reviewCount)
+                .provisionTagList(accommodation.getProvisionTagList().stream()
+                        .map(tag -> tag.getTagName().getLabel())
+                        .collect(Collectors.toList())
+                )
+                .price(accommodation.getPrice())
                 .discountPrice(discountPrice)
                 .totalPrice(discountPrice * days)
-                .cleanlinessScore(accommodation.getCleanlinessScore())
-                .serviceScore(accommodation.getServiceScore())
-                .locationScore(accommodation.getLocationScore())
                 .build();
     }
 }

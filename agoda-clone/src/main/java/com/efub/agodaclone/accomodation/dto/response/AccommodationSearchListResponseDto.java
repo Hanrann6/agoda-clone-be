@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Builder @Getter
@@ -23,11 +24,13 @@ public class AccommodationSearchListResponseDto {
                                                           int totalPage,
                                                           int totalCount,
                                                           int days,
-                                                          BiFunction<Integer, Integer, Integer> discountCalculator) {
+                                                          BiFunction<Integer, Integer, Integer> discountCalculator,
+                                                          Function<Long, Integer> reviewCountCalculator) {
         List<AccommodationSummary> summaries = accommodationList.stream()
                 .map(accommodation -> {
                     int discountPrice = discountCalculator.apply(accommodation.getPrice(), accommodation.getDiscountRate());
-                    return AccommodationSummary.from(accommodation, discountPrice, days);
+                    int reviewCount = reviewCountCalculator.apply(accommodation.getAccommodationId());
+                    return AccommodationSummary.from(accommodation, reviewCount, discountPrice, days);
                 })
                 .collect(Collectors.toList());
 
