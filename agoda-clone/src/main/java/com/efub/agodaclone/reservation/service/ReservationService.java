@@ -2,6 +2,8 @@ package com.efub.agodaclone.reservation.service;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
 import com.efub.agodaclone.accomodation.service.AccommodationService;
+import com.efub.agodaclone.global.exception.AgodaException;
+import com.efub.agodaclone.global.exception.ExceptionCode;
 import com.efub.agodaclone.reservation.domain.Reservation;
 import com.efub.agodaclone.reservation.dto.ReservationConfirmationResponseDto;
 import com.efub.agodaclone.reservation.dto.ReservationListResponseDto;
@@ -62,5 +64,10 @@ public class ReservationService {
         if (reservation.getEndDate().isBefore(today)) {
             return "체크아웃 완료";
         } else return "체크인 완료";
+    }
+
+    public Reservation findReservationById(Long id) {
+        return reservationRepository.findById(id)
+                .orElseThrow(()->new AgodaException(ExceptionCode.RESOURCE_NOT_FOUND));
     }
 }
