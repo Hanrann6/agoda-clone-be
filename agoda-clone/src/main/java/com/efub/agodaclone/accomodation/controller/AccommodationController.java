@@ -6,8 +6,11 @@ import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResp
 import com.efub.agodaclone.accomodation.service.AccommodationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/accommodations")
@@ -18,8 +21,11 @@ public class AccommodationController {
 
     // 숙소 리스트 조회
     @GetMapping
-    public ResponseEntity<AccommodationSearchListResponseDto> searchAccommodation(@RequestBody @Valid AccommodationSearchRequestDto requestDto){
-        AccommodationSearchListResponseDto responseDto = accommodationService.getAccommodationList(requestDto);
+    public ResponseEntity<AccommodationSearchListResponseDto> searchAccommodation(@RequestParam String query,
+                                                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                                                                  @RequestParam int page){
+        AccommodationSearchListResponseDto responseDto = accommodationService.getAccommodationList(query, startDate, endDate, page);
         return ResponseEntity.ok(responseDto);
     }
 

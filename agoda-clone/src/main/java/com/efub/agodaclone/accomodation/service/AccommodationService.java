@@ -8,6 +8,9 @@ import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResp
 import com.efub.agodaclone.accomodation.repository.AccommodationRepository;
 import com.efub.agodaclone.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +27,14 @@ public class AccommodationService {
     private final RoomRepository roomRepository;
 
     // 숙소 검색 리스트
-    public AccommodationSearchListResponseDto getAccommodationList(AccommodationSearchRequestDto accommodationSearchRequestDto){
-        List<Accommodation> accommodationList = accommodationRepository.findByLocationContaining(accommodationSearchRequestDto.getQuery());
-        int days = getDays(accommodationSearchRequestDto.getStartDate(), accommodationSearchRequestDto.getEndDate());
+    public AccommodationSearchListResponseDto getAccommodationList(String query, LocalDate startDate, LocalDate endDate, int page){
+        Pageable pageable = PageRequest.of(page, 8);
+        Page<Accommodation> accommodationList = accommodationRepository.findByLocationContaining(query, pageable);
+        int totalPages = accommodationList.getTotalPages();
+        int totalCount = (int) accommodationList.getTotalElements();
+        int days = getDays(startDate, endDate);
 
-        return AccommodationSearchListResponseDto.from(accommodationList, days, this::calculateDiscountPrice);
+        return AccommodationSearchListResponseDto.from(accommodationList, page, totalPages, totalCount, days, this::calculateDiscountPrice);
     }
 
     // 숙소 상세 정보 조회
