@@ -29,10 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Long userId = jwtProvider.validateAndGetUserId(token);
 
-                // ✅ 여기서 SecurityContext에 사용자 정보 설정 가능 (CustomUserDetails 등)
+                // 여기서 SecurityContext에 사용자 정보 설정 가능 (CustomUserDetails 등)
                 // 지금은 인증은 안 해도 되므로 그냥 userId만 사용해도 됨
-
-                // ex) SecurityContextHolder.getContext().setAuthentication(authentication);
                 request.setAttribute("userId", userId); // 간단하게 저장하는 예시
 
             } catch (RuntimeException e) {
