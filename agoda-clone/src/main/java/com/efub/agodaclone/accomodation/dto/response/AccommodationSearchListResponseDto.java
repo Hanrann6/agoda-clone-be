@@ -2,6 +2,7 @@ package com.efub.agodaclone.accomodation.dto.response;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
 import com.efub.agodaclone.accomodation.dto.summary.AccommodationSummary;
+import com.efub.agodaclone.review.repository.ReviewRepository;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
@@ -23,11 +24,13 @@ public class AccommodationSearchListResponseDto {
                                                           int totalPage,
                                                           int totalCount,
                                                           int days,
-                                                          BiFunction<Integer, Integer, Integer> discountCalculator) {
+                                                          BiFunction<Integer, Integer, Integer> discountCalculator,
+                                                          ReviewRepository reviewRepository) {
         List<AccommodationSummary> summaries = accommodationList.stream()
                 .map(accommodation -> {
                     int discountPrice = discountCalculator.apply(accommodation.getPrice(), accommodation.getDiscountRate());
-                    return AccommodationSummary.from(accommodation, discountPrice, days);
+                    int reviewCount = reviewRepository.countByAccommodationId(accommodation.getAccommodationId()); //
+                    return AccommodationSummary.from(accommodation, discountPrice, days, reviewCount);
                 })
                 .collect(Collectors.toList());
 

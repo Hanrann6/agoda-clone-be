@@ -17,7 +17,7 @@ public class AccommodationSummary {
     private double totalScore;
     private int reviewCount;
     private String description;
-    //    private List<String> provisionTagList;
+    private List<String> provisionTagList;
 
     private String roomType;
     private String bed;
@@ -30,18 +30,18 @@ public class AccommodationSummary {
     private double serviceScore;
     private double locationScore;
 
-    public static AccommodationSummary from(Accommodation accommodation, int discountPrice, int days) {
+    public static AccommodationSummary from(Accommodation accommodation, int reviewCount, int discountPrice, int days) {
         Room room = accommodation.getRoomList().get(0); // 객실 1개만 사용
         return AccommodationSummary.builder()
                 .korName(accommodation.getKorName())
                 .engName(accommodation.getEngName())
                 .totalScore(accommodation.getTotalScore())
-//                .reviewCount(accommodation.getReviewList().size())
+                .reviewCount(reviewCount)
                 .description(accommodation.getDescription())
-//                .provisionTag(accommodation.getProvisionTags().stream()
-//                        .map(ProvisionTag::getName)
-//                        .collect(Collectors.toList())
-//                )
+                .provisionTagList(accommodation.getProvisionTagList().stream()
+                        .map(tag -> tag.getTagName().getLabel())
+                        .collect(Collectors.toList())
+                )
                 .roomType(room.getRoomType())
                 .bed(room.getBed())
                 .roomImages(room.getRoomImageList().stream()

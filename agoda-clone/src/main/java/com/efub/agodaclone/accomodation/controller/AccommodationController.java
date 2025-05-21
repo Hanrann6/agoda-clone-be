@@ -1,10 +1,8 @@
 package com.efub.agodaclone.accomodation.controller;
 
-import com.efub.agodaclone.accomodation.dto.request.AccommodationSearchRequestDto;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationDetailResponseDto;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResponseDto;
 import com.efub.agodaclone.accomodation.service.AccommodationService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
