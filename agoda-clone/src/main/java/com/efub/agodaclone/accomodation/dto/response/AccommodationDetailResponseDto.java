@@ -17,6 +17,7 @@ public class AccommodationDetailResponseDto {
 
     private String korName;
     private String engName;
+    private String address;
     private double totalScore;
     private int reviewCount;
     private String description;
@@ -25,6 +26,7 @@ public class AccommodationDetailResponseDto {
     private String bed;
     private List<String> roomImage;
     private int price;
+    private int discountPrice;
     private List<String> provisionTagList;
     private double cleanlinessScore;
     private double serviceScore;
@@ -34,6 +36,7 @@ public class AccommodationDetailResponseDto {
         return AccommodationDetailResponseDto.builder()
                 .korName(accommodation.getKorName())
                 .engName(accommodation.getEngName())
+                .address(accommodation.getAddress())
                 .totalScore(accommodation.getTotalScore())
                 .reviewCount(reviewCount)
                 .description(accommodation.getDescription())
@@ -46,7 +49,8 @@ public class AccommodationDetailResponseDto {
                 .roomImage(room.getRoomImageList().stream()
                         .map(RoomImage::getImgUrl)
                         .collect(Collectors.toList()))
-                .price(discountPrice)
+                .price(accommodation.getPrice())
+                .discountPrice(discountPrice)
                 .provisionTagList(accommodation.getProvisionTagList().stream()
                         .map(tag -> tag.getTagName().getLabel())
                         .collect(Collectors.toList())
