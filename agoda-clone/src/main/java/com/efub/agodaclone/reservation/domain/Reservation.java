@@ -1,6 +1,7 @@
 package com.efub.agodaclone.reservation.domain;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
+import com.efub.agodaclone.review.domain.Review;
 import com.efub.agodaclone.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -33,8 +34,8 @@ public class Reservation {
     @JoinColumn(name = "accommodation_id")
     private Accommodation accommodation;
 
-//    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Review review;
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Review review;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
