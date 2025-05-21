@@ -55,5 +55,4 @@ public class AccommodationDetailResponseDto {
                 .locationScore(accommodation.getLocationScore())
                 .build();
     }
-
 }

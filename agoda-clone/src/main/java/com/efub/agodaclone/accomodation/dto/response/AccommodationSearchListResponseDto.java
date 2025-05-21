@@ -4,6 +4,7 @@ import com.efub.agodaclone.accomodation.domain.Accommodation;
 import com.efub.agodaclone.accomodation.dto.summary.AccommodationSummary;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -17,19 +18,24 @@ public class AccommodationSearchListResponseDto {
     private int totalPage;
     private int totalCount;
 
-    public static AccommodationSearchListResponseDto from(List<Accommodation> accommodationList, int days, BiFunction<Integer, Integer, Integer> discountCalculator) {
+    public static AccommodationSearchListResponseDto from(Page<Accommodation> accommodationList,
+                                                          int currentPage,
+                                                          int totalPage,
+                                                          int totalCount,
+                                                          int days,
+                                                          BiFunction<Integer, Integer, Integer> discountCalculator) {
         List<AccommodationSummary> summaries = accommodationList.stream()
-                .map(accomodation -> {
-                    int discountPrice = discountCalculator.apply(accomodation.getPrice(), accomodation.getDiscountRate());
-                    return AccommodationSummary.from(accomodation, discountPrice, days);
+                .map(accommodation -> {
+                    int discountPrice = discountCalculator.apply(accommodation.getPrice(), accommodation.getDiscountRate());
+                    return AccommodationSummary.from(accommodation, discountPrice, days);
                 })
                 .collect(Collectors.toList());
 
         return AccommodationSearchListResponseDto.builder()
                 .accommodations(summaries)
-                .currentPage(1)
-                .totalPage(1)
-                .totalCount(summaries.size())
+                .currentPage(currentPage)
+                .totalPage(totalPage)
+                .totalCount(totalCount)
                 .build();
     }
 }
