@@ -40,7 +40,7 @@ public class Review extends BaseEntity {
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
     @Builder
-    public Review(String content, int cleanlinessScore, int serviceScore, int locationScore, Reservation reservation, List<ReviewImage> reviewImages) {
+    public Review(String content, int cleanlinessScore, int serviceScore, int locationScore, Reservation reservation) {
         this.content = content;
         this.cleanlinessScore = cleanlinessScore;
         this.serviceScore = serviceScore;
