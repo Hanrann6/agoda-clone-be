@@ -3,6 +3,7 @@ package com.efub.agodaclone.review.domain;
 import com.efub.agodaclone.global.entity.BaseEntity;
 import com.efub.agodaclone.reservation.domain.Reservation;
 import com.efub.agodaclone.review.dto.request.ReviewCreateRequest;
+import com.efub.agodaclone.review.dto.request.ReviewUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -46,7 +47,6 @@ public class Review extends BaseEntity {
         this.serviceScore = serviceScore;
         this.locationScore = locationScore;
         this.reservation = reservation;
-        this.reviewImages = reviewImages;
     }
 
     public static Review create(Reservation reservation, ReviewCreateRequest request){
@@ -72,26 +72,23 @@ public class Review extends BaseEntity {
         reviewImage.setReview(this);
     }
 
-    // 리뷰 이미지 삭제
-    public void removeReviewImage(ReviewImage reviewImage) {
-        this.reviewImages.remove(reviewImage);
+    // 리뷰 이미지 모두 삭제
+    public void removeAllReviewImages() {
+        this.reviewImages.clear();
     }
 
     // 리뷰 내용 수정
-    public void updateReviewContent(String content) {
-        this.content = content;
+    public void updateReview(ReviewUpdateRequest request){
+        this.cleanlinessScore = request.getCleanScore();
+        this.locationScore = request.getLocationScore();
+        this.serviceScore = request.getServiceScore();
+        this.content = request.getReviewText();
+        removeAllReviewImages();
+        request.getReviewImages().forEach(url ->{
+            ReviewImage img = ReviewImage.builder()
+                    .reviewImage(url)
+                    .build();
+            addReviewImage(img);
+        });
     }
-
-    public void updateCleanlinessScore(int cleanlinessScore) {
-        this.cleanlinessScore = cleanlinessScore;
-    }
-
-    public void updateServiceScore(int serviceScore) {
-        this.serviceScore = serviceScore;
-    }
-
-    public void updateLocationScore(int locationScore) {
-        this.locationScore = locationScore;
-    }
-
 }
