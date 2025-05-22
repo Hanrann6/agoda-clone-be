@@ -15,6 +15,8 @@ public class AccommodationDetailResponseDto {
     private String engName;
     private String address;
     private double totalScore;
+    private int price;
+    private int discountPrice;
     private int reviewCount;
     private String description;
     private List<String> accommodationImages;
@@ -29,6 +31,8 @@ public class AccommodationDetailResponseDto {
                 .engName(accommodation.getEngName())
                 .address(accommodation.getAddress())
                 .totalScore(accommodation.getTotalScore())
+                .price(accommodation.getPrice())
+                .discountPrice(discountPrice)
                 .reviewCount(reviewCount)
                 .description(accommodation.getDescription())
                 .accommodationImages(accommodation.getAccommodationImageList().stream()
