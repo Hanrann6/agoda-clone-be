@@ -1,7 +1,7 @@
 package com.efub.agodaclone.user.service;
 
 import com.efub.agodaclone.user.domain.CustomUserDetails;
-import com.efub.agodaclone.user.domain.KakaoUserInfo;
+import com.efub.agodaclone.user.dto.KakaoUserInfo;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,5 +75,14 @@ public class UserService {
         return userRepository.findById(userDetails.getId())
                 .orElseThrow(() -> new RuntimeException(ClientExceptionCode.RESOURCE_NOT_FOUND.name()));
     }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        userRepository.delete(user);
+    }
+
 
 }

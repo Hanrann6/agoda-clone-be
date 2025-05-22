@@ -9,6 +9,7 @@ import com.efub.agodaclone.accomodation.dto.response.AccommodationDetailResponse
 import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResponseDto;
 import com.efub.agodaclone.accomodation.repository.AccommodationRepository;
 import com.efub.agodaclone.room.repository.RoomRepository;
+import com.efub.agodaclone.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +26,7 @@ import java.time.temporal.ChronoUnit;
 public class AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
-    private final RoomRepository roomRepository;
+    private final RoomService roomService;
     private final ReviewRepository reviewRepository;
 
     // 숙소 검색 리스트
@@ -50,17 +51,11 @@ public class AccommodationService {
     // 숙소 상세 정보 조회
     public AccommodationDetailResponseDto getDetailedAccommodation(Long accommodationId){
         Accommodation accommodation = findAccommodationById(accommodationId);
-        Room room = findRoom(accommodation);
+        Room room = roomService.findRoomByAccommodation(accommodation);
         int reviewCount = getReviewCount(accommodationId);
         int discountPrice = calculateDiscountPrice(accommodation.getPrice(), accommodation.getDiscountRate());
 
         return AccommodationDetailResponseDto.from(accommodation, room, reviewCount, discountPrice);
-    }
-
-    // 숙소로 객실 조회하는 함수
-    public Room findRoom(Accommodation accommodation){
-        return roomRepository.findByAccommodation(accommodation)
-                .orElseThrow(()->new AgodaException(ExceptionCode.RESOURCE_NOT_FOUND));
     }
 
     // 숙소 ID로 숙소 조회하는 함수

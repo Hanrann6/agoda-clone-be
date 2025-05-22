@@ -18,9 +18,11 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     // 예약하기
-    @PostMapping
-    public ResponseEntity<ReservationConfirmationResponseDto> makeReservation(@RequestBody @Valid ReservationRequestDto requestDto){
-        ReservationConfirmationResponseDto responseDto = reservationService.addReservation(requestDto);
+    @PostMapping("/{accommodationId}/{roomId}")
+    public ResponseEntity<ReservationConfirmationResponseDto> makeReservation(@PathVariable("accommodationId") Long accommodationId,
+                                                                              @PathVariable("roomId") Long roomId,
+                                                                              @RequestBody @Valid ReservationRequestDto requestDto){
+        ReservationConfirmationResponseDto responseDto = reservationService.addReservation(accommodationId, roomId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 

@@ -1,4 +1,4 @@
-package com.efub.agodaclone.user.domain;
+package com.efub.agodaclone.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

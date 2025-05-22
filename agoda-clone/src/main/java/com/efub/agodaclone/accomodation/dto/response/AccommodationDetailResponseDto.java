@@ -22,6 +22,7 @@ public class AccommodationDetailResponseDto {
     private int reviewCount;
     private String description;
     private List<String> accommodationImages;
+    private Long roomId;
     private String roomType;
     private String bed;
     private List<String> roomImages;
@@ -44,6 +45,7 @@ public class AccommodationDetailResponseDto {
                                 .map(AccommodationImage::getImgUrl)
                                 .collect(Collectors.toList())
                 )
+                .roomId(room.getRoomId())
                 .roomType(room.getRoomType())
                 .bed(room.getBed())
                 .roomImages(room.getRoomImageList().stream()

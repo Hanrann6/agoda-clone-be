@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/agoda
-    username: 'root'
-    password: '0612'
+    url: ${datasource.url}
+    username: ${datasource.username}
+    password: ${datasource.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -12,8 +12,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
+spring.devtools.restart.enabled: false
 
 cors:
   allow-origins:
     - "http://localhost:5173"
     - "http://localhost:8080"
+kakao:
+  client-id: ${kakao.client-id}
+  redirect-uri: ${kakao.redirect-uri}
+  javascript-key: ${kakao.javascript-key}
+
+jwt:
+  secret-key: ${jwt.secret-key}
