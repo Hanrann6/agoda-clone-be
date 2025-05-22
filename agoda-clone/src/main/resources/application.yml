@@ -12,6 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+spring.devtools.restart.enabled: false
 
 cors:
   allow-origins:
@@ -20,3 +21,7 @@ cors:
 kakao:
   client-id: ${kakao.client-id}
   redirect-uri: ${kakao.redirect-uri}
+  javascript-key: ${kakao.javascript-key}
+
+jwt:
+  secret-key: ${jwt.secret-key}

@@ -76,4 +76,13 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException(ClientExceptionCode.RESOURCE_NOT_FOUND.name()));
     }
 
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        userRepository.delete(user);
+    }
+
+
 }

@@ -5,11 +5,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,9 +32,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Long userId = jwtProvider.validateAndGetUserId(token);
 
-                // 여기서 SecurityContext에 사용자 정보 설정 가능 (CustomUserDetails 등)
-                // 지금은 인증은 안 해도 되므로 그냥 userId만 사용해도 됨
+                // Spring Security가 인식할 수 있게 인증 객체 등록
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userId, null,
+                                List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+
+                // userId 저장
                 request.setAttribute("userId", userId); // 간단하게 저장하는 예시
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+                System.out.println("🔐 인증된 유저 ID: " + userId);
+                System.out.println("🔐 권한: " + authentication.getAuthorities());
+
 
             } catch (RuntimeException e) {
                 System.out.println("JWT 검증 실패: " + e.getMessage());
