@@ -24,9 +24,7 @@ public class ReviewController {
 
     // 예약 리뷰 남기기
     @PostMapping
-    public ResponseEntity<Void> addReview(
-            //@AuthenticationPrincipal User user,
-            @Valid @RequestBody ReviewCreateRequest request){
+    public ResponseEntity<Void> addReview(@Valid @RequestBody ReviewCreateRequest request){
         Long reviewId = reviewService.addReview(request);
         return ResponseEntity.created(URI.create("/reviews/" + reviewId)).build();
     }
