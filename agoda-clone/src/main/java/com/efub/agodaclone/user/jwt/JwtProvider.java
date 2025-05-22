@@ -32,7 +32,7 @@ public class JwtProvider {
     public Long validateAndGetUserId(String token) {
         try {
             Claims claims = Jwts.parser()
-                    .setSigningKey(getKey()) // ✅ 고쳐야 하는 부분!
+                    .setSigningKey(getKey()) // 고쳐야 하는 부분!
                     .parseClaimsJws(token)
                     .getBody();
             return Long.valueOf(claims.getSubject());
@@ -45,11 +45,5 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    //jwt 키 에러 디버그용..
-    @PostConstruct
-    public void checkKey() {
-        System.out.println("🟢 Loaded secretKey: " + secretKey);
-        System.out.println("🧩 Key length: " + secretKey.getBytes(StandardCharsets.UTF_8).length + " bytes");
-    }
 }
 

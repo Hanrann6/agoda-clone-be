@@ -43,9 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
-                System.out.println("🔐 인증된 유저 ID: " + userId);
-                System.out.println("🔐 권한: " + authentication.getAuthorities());
-
 
             } catch (RuntimeException e) {
                 System.out.println("JWT 검증 실패: " + e.getMessage());

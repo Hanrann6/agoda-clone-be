@@ -38,11 +38,9 @@ public class AuthController {
 
     @DeleteMapping("/oauth/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("로그아웃 컨트롤러 진입 시도");
 
         Long userId = (Long) request.getAttribute("userId");
         userService.deleteUser(userId);
-        System.out.println("회원 탈퇴 userId: " + userId);
 
         // access_token 쿠키 제거
         ResponseCookie accessCookie = ResponseCookie.from("access_token", "")
