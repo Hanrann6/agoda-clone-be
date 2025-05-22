@@ -1,7 +1,8 @@
 package com.efub.agodaclone.user.service;
 
-import com.efub.agodaclone.user.domain.KakaoUserInfo;
+import com.efub.agodaclone.user.dto.KakaoUserInfo;
 import com.efub.agodaclone.user.dto.KakaoTokenResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpHeaders;
@@ -15,13 +16,19 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KakaoService {
 
+    @Value("${kakao.client-id}")
+    private String clientId;
+
+    @Value("${kakao.redirect-uri}")
+    private String redirectUri;
+
     public String getAccessToken(String code) {
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "ea9b00fd05f6efda4939a737f9c40b16");
-        params.add("redirect_uri", "http://localhost:8080/kakao/callback");
+        params.add("client_id", clientId);
+        params.add("redirect_uri", redirectUri);
         params.add("code", code);
         //params.add("client_secret", "{CLIENT_SECRET}"); // 선택 사항
 
