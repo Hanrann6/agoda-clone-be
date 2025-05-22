@@ -2,11 +2,15 @@ package com.efub.agodaclone.reservation.service;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
 import com.efub.agodaclone.accomodation.service.AccommodationService;
+import com.efub.agodaclone.global.exception.AgodaException;
+import com.efub.agodaclone.global.exception.ExceptionCode;
 import com.efub.agodaclone.reservation.domain.Reservation;
 import com.efub.agodaclone.reservation.dto.ReservationConfirmationResponseDto;
 import com.efub.agodaclone.reservation.dto.ReservationListResponseDto;
 import com.efub.agodaclone.reservation.dto.ReservationRequestDto;
 import com.efub.agodaclone.reservation.repository.ReservationRepository;
+import com.efub.agodaclone.room.domain.Room;
+import com.efub.agodaclone.room.service.RoomService;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +30,17 @@ public class ReservationService {
     private final AccommodationService accommodationService;
     private final ReservationRepository reservationRepository;
     private final UserService userService;
+    private final RoomService roomService;
 
     // 예약하기
-    public ReservationConfirmationResponseDto addReservation(ReservationRequestDto requestDto) {
+    public ReservationConfirmationResponseDto addReservation(Long accommodationId, Long roomId, ReservationRequestDto requestDto) {
         User findUser = userService.getCurrentUser(); // 현재 로그인된 유저 찾아오기
-        Accommodation findAccommodation = accommodationService.findAccommodationById(requestDto.getAccommodationId());
-        Reservation reservation = requestDto.toEntity(findUser, findAccommodation);
+        if (requestDto.getStartDate().isAfter(requestDto.getEndDate())) {
+            throw new AgodaException(ExceptionCode.INVALID_DATE_RANGE);
+        }
+        Accommodation findAccommodation = accommodationService.findAccommodationById(accommodationId);
+        Room findRoom = roomService.findByRoomId(roomId);
+        Reservation reservation = requestDto.toEntity(findUser, findAccommodation, findRoom);
         reservationRepository.save(reservation);
 
         return ReservationConfirmationResponseDto.of(reservation);
