@@ -1,6 +1,6 @@
 package com.efub.agodaclone.user.service;
 
-import com.efub.agodaclone.user.domain.KakaoUserInfo;
+import com.efub.agodaclone.user.dto.KakaoUserInfo;
 import com.efub.agodaclone.user.dto.KakaoTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

@@ -1,7 +1,7 @@
 package com.efub.agodaclone.user.service;
 
 import com.efub.agodaclone.user.domain.CustomUserDetails;
-import com.efub.agodaclone.user.domain.KakaoUserInfo;
+import com.efub.agodaclone.user.dto.KakaoUserInfo;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
