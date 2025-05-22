@@ -22,8 +22,10 @@ public class AccommodationController {
     public ResponseEntity<AccommodationSearchListResponseDto> searchAccommodation(@RequestParam String query,
                                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                                                                  @RequestParam int minPrice,
+                                                                                  @RequestParam int maxPrice,
                                                                                   @RequestParam int page){
-        AccommodationSearchListResponseDto responseDto = accommodationService.getAccommodationList(query, startDate, endDate, page);
+        AccommodationSearchListResponseDto responseDto = accommodationService.getAccommodationList(query, startDate, endDate, minPrice, maxPrice, page);
         return ResponseEntity.ok(responseDto);
     }
 
