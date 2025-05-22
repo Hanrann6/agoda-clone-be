@@ -2,6 +2,7 @@ package com.efub.agodaclone.reservation.dto;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
 import com.efub.agodaclone.reservation.domain.Reservation;
+import com.efub.agodaclone.room.domain.Room;
 import com.efub.agodaclone.user.domain.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,9 +15,6 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReservationRequestDto {
-
-    @NotNull
-    private Long accommodationId;
     @NotBlank
     private String firstName;
     @NotBlank
@@ -32,10 +30,11 @@ public class ReservationRequestDto {
 
     private String requestedTerm;
 
-    public Reservation toEntity(User user, Accommodation accommodation){
+    public Reservation toEntity(User user, Accommodation accommodation, Room room){
         return Reservation.builder()
                 .user(user)
                 .accommodation(accommodation)
+                .room(room)
                 .startDate(startDate)
                 .endDate(endDate)
                 .firstName(firstName)
