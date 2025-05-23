@@ -43,6 +43,7 @@ public class KakaoService {
         return response.getBody().getAccessToken();
     }
 
+    //카카오에서 user 정보 받아옴
     public KakaoUserInfo getUserInfo(String accessToken) {
         String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
 

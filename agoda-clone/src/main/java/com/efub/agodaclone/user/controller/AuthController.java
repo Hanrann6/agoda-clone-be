@@ -134,4 +134,13 @@ public class AuthController {
         return null;
     }
 
+    //////user service test용. 사용 후 삭제
+    @GetMapping("/user/me")
+    public ResponseEntity<?> getMyInfo() {
+        User user = userService.getCurrentUser();
+
+        return ResponseEntity.ok()
+                .body("🙋‍♀️ 현재 유저: " + user.getName() + " (id: " + user.getUserId() + ")");
+    }
+
 }
