@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ReservationShareService {
@@ -30,4 +32,9 @@ public class ReservationShareService {
         return reservationRepository.findUserByReservation(reservation)
                 .orElseThrow(()-> new AgodaException(ExceptionCode.RESERVATION_NOT_FOUND));
     }
+
+    public List<Reservation> findReservationByUser(User user) {
+        return reservationRepository.findAllByUserOrderByStartDateAsc(user);
+    }
+
 }

@@ -1,12 +1,10 @@
 package com.efub.agodaclone.review.controller;
 
-import com.efub.agodaclone.global.exception.AgodaException;
-import com.efub.agodaclone.global.exception.ExceptionCode;
 import com.efub.agodaclone.review.dto.request.ReviewCreateRequest;
 import com.efub.agodaclone.review.dto.request.ReviewUpdateRequest;
+import com.efub.agodaclone.review.dto.response.MyReviewResponse;
 import com.efub.agodaclone.review.dto.response.ReviewDetailResponse;
 import com.efub.agodaclone.review.service.ReviewService;
-import com.efub.agodaclone.user.domain.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +45,12 @@ public class ReviewController {
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDetailResponse> getReviewDetail(@PathVariable("reviewId") Long reviewId){
         ReviewDetailResponse response = reviewService.getReviewDetail(reviewId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MyReviewResponse> getMyReview(){
+        MyReviewResponse response = reviewService.getMyReview();
         return ResponseEntity.ok(response);
     }
 
