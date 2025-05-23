@@ -24,6 +24,8 @@ public enum ExceptionCode {
             "액세스 토큰이 존재하지 않습니다. 액세스 토큰을 발급해주세요."),
     REFRESH_TOKEN_EMPTY(HttpStatus.UNAUTHORIZED, ClientExceptionCode.REFRESH_TOKEN_EMPTY,
             "리프레시 토큰이 존재하지 않습니다. 다시 로그인해주세요."),
+    REFRESH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, ClientExceptionCode.REFRESH_TOKEN_INVALID,
+            "리프레시 토큰이 존재하지 않습니다. 다시 로그인해주세요."),
 
     // 예약
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, ClientExceptionCode.RESOURCE_NOT_FOUND,
