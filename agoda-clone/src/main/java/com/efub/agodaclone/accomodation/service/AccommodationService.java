@@ -26,7 +26,6 @@ import java.time.temporal.ChronoUnit;
 public class AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
-    private final RoomService roomService;
     private final ReviewRepository reviewRepository;
 
     // 숙소 검색 리스트
