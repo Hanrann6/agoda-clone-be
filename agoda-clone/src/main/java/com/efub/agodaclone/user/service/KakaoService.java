@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -56,4 +57,27 @@ public class KakaoService {
 
         return response.getBody();
     }
+
+    public void unlinkKakao(String kakaoAccessToken) {
+        if (kakaoAccessToken == null) {
+            System.out.println("kakaoAccessToken is null");
+            return;
+        }
+
+        String url = "https://kapi.kakao.com/v1/user/unlink";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(kakaoAccessToken);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            System.out.println("카카오 unlink 성공: " + response.getBody());
+        } catch (HttpClientErrorException e) {
+            System.out.println("unlink 실패: " + e.getStatusCode() + " / " + e.getResponseBodyAsString());
+        }
+    }
+
 }

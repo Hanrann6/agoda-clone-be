@@ -19,7 +19,7 @@ public class JwtProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    private final long expirationMs = 3600000;
+    private final long expirationMs = 7 * 24 * 60 * 60 * 1000; //TODO: 일주일로 설정함. 나중에는 1시간 3600000
 
     public String generateToken(Long userId) {
         return Jwts.builder()
