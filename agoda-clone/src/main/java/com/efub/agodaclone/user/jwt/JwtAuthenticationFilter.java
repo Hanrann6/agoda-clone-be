@@ -1,6 +1,9 @@
 package com.efub.agodaclone.user.jwt;
 
 import com.efub.agodaclone.global.exception.ClientExceptionCode;
+import com.efub.agodaclone.user.domain.CustomUserDetails;
+import com.efub.agodaclone.user.domain.User;
+import com.efub.agodaclone.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +24,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -33,8 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Long userId = jwtProvider.validateAndGetUserId(token);
 
+                User user = userRepository.findById(userId).orElseThrow();
+                CustomUserDetails userDetails = new CustomUserDetails(user.getUserId(), user.getEmail(), user.getName());
+
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userId, null,
+                        new UsernamePasswordAuthenticationToken(userDetails, null,
                                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
                 request.setAttribute("userId", userId);
