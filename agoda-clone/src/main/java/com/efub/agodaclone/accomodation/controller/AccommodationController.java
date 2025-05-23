@@ -3,6 +3,8 @@ package com.efub.agodaclone.accomodation.controller;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationDetailResponseDto;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResponseDto;
 import com.efub.agodaclone.accomodation.service.AccommodationService;
+import com.efub.agodaclone.room.dto.RoomListResponseDto;
+import com.efub.agodaclone.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 public class AccommodationController {
 
     private final AccommodationService accommodationService;
+    private final RoomService roomService;
 
     // 숙소 리스트 조회
     @GetMapping
@@ -33,6 +36,13 @@ public class AccommodationController {
     @GetMapping("/{accommodationId}")
     public ResponseEntity<AccommodationDetailResponseDto> getAccommodationDetail(@PathVariable("accommodationId") Long accommodationId){
         AccommodationDetailResponseDto responseDto = accommodationService.getDetailedAccommodation(accommodationId);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    // 숙소 객실 조회
+    @GetMapping("/{accommodationId}/rooms")
+    public ResponseEntity<RoomListResponseDto> getAccommodationRooms(@PathVariable("accommodationId") Long accommodationId){
+        RoomListResponseDto responseDto = roomService.getRoomList(accommodationId);
         return ResponseEntity.ok(responseDto);
     }
 
