@@ -22,7 +22,7 @@ public class AccommodationSummary {
     private int price;
     private int discountPrice;
     private int totalPrice;
-    private List<String> provisionTag;
+    private List<String> provisionTags;
 
     public static AccommodationSummary from(Accommodation accommodation, int reviewCount, int discountPrice, int days) {
         AccommodationImage accommodationImage = accommodation.getAccommodationImageList().get(0); // 대표 이미지 1개만 사용
@@ -34,7 +34,7 @@ public class AccommodationSummary {
                 .location(accommodation.getLocation())
                 .totalScore(accommodation.getTotalScore())
                 .reviewCount(reviewCount)
-                .provisionTag(accommodation.getProvisionTagList().stream()
+                .provisionTags(accommodation.getProvisionTagList().stream()
                         .map(tag -> tag.getTagName().getLabel())
                         .collect(Collectors.toList())
                 )
