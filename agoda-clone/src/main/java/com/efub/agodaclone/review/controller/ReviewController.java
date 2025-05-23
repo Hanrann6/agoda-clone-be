@@ -34,4 +34,11 @@ public class ReviewController {
         reviewService.updateReview(request, reviewId);
         return ResponseEntity.noContent().build();
     }
+
+    // 예약 리뷰 삭제
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable("reviewId") Long reviewId){
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
 }

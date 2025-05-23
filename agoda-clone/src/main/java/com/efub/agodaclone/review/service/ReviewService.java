@@ -12,12 +12,14 @@ import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.repository.UserRepository;
 import com.efub.agodaclone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationService reservationService;
@@ -26,7 +28,8 @@ public class ReviewService {
 
 
     public Long addReview(ReviewCreateRequest reviewCreateRequest){
-        User user = userService.getCurrentUser();
+        //User user = userService.getCurrentUser();
+        User user = userRepository.findByKakaoId("12345").orElse(null);
         Long reservationId = reviewCreateRequest.getReservationId();
         Reservation reservation = reservationService.findReservationById(reservationId);
         validateReservationOwnership(user, reservation);
@@ -37,16 +40,30 @@ public class ReviewService {
 
     public void updateReview(ReviewUpdateRequest reviewUpdateRequest, Long reviewId){
         User user = userService.getCurrentUser();
-        Review review = reviewRepository.findByReviewId(reviewId)
-                .orElseThrow(()->new AgodaException(ExceptionCode.RESOURCE_NOT_FOUND));
+        Review review = getReviewById(reviewId);
         Reservation reservation = review.getReservation();
         validateReservationOwnership(user, reservation);
         review.updateReview(reviewUpdateRequest);
     }
 
+    public void deleteReview(Long reviewId){
+        //User user = userService.getCurrentUser();
+        User user = userRepository.findByKakaoId("12345").orElse(null);
+        Review review = getReviewById(reviewId);
+        validateReservationOwnership(user, review.getReservation());
+        reviewRepository.delete(review);
+    }
+
     private void validateReservationOwnership(User user, Reservation reservation){
-        if(!user.getUserId().equals(reservation.getUser().getUserId())){
+        Long writerId = user.getUserId();
+        Long reserovatorId = reservation.getReservationId();
+        if(!writerId.equals(reserovatorId)){
             throw new AgodaException(ExceptionCode.UNAUTHORIZED);
         }
+    }
+
+    public Review getReviewById(Long reviewId){
+        return reviewRepository.findByReviewId(reviewId)
+                .orElseThrow(()->new AgodaException(ExceptionCode.RESOURCE_NOT_FOUND));
     }
 }
