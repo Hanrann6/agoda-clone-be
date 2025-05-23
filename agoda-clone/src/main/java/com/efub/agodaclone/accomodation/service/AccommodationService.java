@@ -73,7 +73,7 @@ public class AccommodationService {
     }
 
     // 숙소 리뷰 개수 반환하는 함수
-    private int getReviewCount(Long accommodationId){
+    public int getReviewCount(Long accommodationId){
         return reviewRepository.countByAccommodationId(accommodationId);
     }
 }

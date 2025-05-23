@@ -4,6 +4,7 @@ import com.efub.agodaclone.global.exception.AgodaException;
 import com.efub.agodaclone.global.exception.ExceptionCode;
 import com.efub.agodaclone.review.dto.request.ReviewCreateRequest;
 import com.efub.agodaclone.review.dto.request.ReviewUpdateRequest;
+import com.efub.agodaclone.review.dto.response.ReviewDetailResponse;
 import com.efub.agodaclone.review.service.ReviewService;
 import com.efub.agodaclone.user.domain.User;
 import jakarta.validation.Valid;
@@ -41,4 +42,13 @@ public class ReviewController {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
     }
+
+    // 리뷰 단건 조회
+    @GetMapping("/{reviewId}")
+    public ResponseEntity<ReviewDetailResponse> getReviewDetail(@PathVariable("reviewId") Long reviewId){
+        ReviewDetailResponse response = reviewService.getReviewDetail(reviewId);
+        return ResponseEntity.ok(response);
+    }
+
+
 }
