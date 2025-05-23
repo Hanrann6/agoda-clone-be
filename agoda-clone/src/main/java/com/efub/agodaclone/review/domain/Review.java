@@ -5,11 +5,7 @@ import com.efub.agodaclone.reservation.domain.Reservation;
 import com.efub.agodaclone.review.dto.request.ReviewCreateRequest;
 import com.efub.agodaclone.review.dto.request.ReviewUpdateRequest;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +29,9 @@ public class Review extends BaseEntity {
     @Column(name = "location_score", nullable = false)
     private int locationScore;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", nullable = false)
+    @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
     @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -91,4 +88,5 @@ public class Review extends BaseEntity {
             addReviewImage(img);
         });
     }
+
 }

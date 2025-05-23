@@ -15,8 +15,8 @@ public class ReviewImage {
     private String reviewImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="review_id", nullable = false)
-    @Setter(AccessLevel.PACKAGE)
+    @JoinColumn(name ="review_id")
+    @Setter
     private Review review;
 
     @Builder

@@ -30,6 +30,8 @@ public enum ExceptionCode {
             "해당 숙소 또는 객실이 존재하지 않습니다."),
     DUPLICATE_RESERVATION(HttpStatus.CONFLICT, ClientExceptionCode.DUPLICATE_RESERVATION,
             "해당 시간대는 이미 예약이 완료되었습니다."),
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, ClientExceptionCode.RESERVATION_NOT_FOUND,
+            "해당 예약이 존재하지 않습니다."),
 
     // 리뷰
     NO_REVIEW_RATING(HttpStatus.BAD_REQUEST, ClientExceptionCode.ILLEGAL_ARGUMENT,
