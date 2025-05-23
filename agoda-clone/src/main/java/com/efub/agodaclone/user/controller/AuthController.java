@@ -1,9 +1,9 @@
 package com.efub.agodaclone.user.controller;
 
-import com.efub.agodaclone.global.exception.ClientExceptionCode;
-import com.efub.agodaclone.user.dto.KakaoUserInfo;
+import com.efub.agodaclone.global.exception.AgodaException;
+import com.efub.agodaclone.global.exception.ExceptionCode;
+import com.efub.agodaclone.user.dto.KakaoUserResponseDto;
 import com.efub.agodaclone.user.domain.User;
-import com.efub.agodaclone.user.dto.AuthResponse;
 import com.efub.agodaclone.user.jwt.JwtProvider;
 import com.efub.agodaclone.user.service.KakaoService;
 import com.efub.agodaclone.user.service.UserService;
@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +27,8 @@ public class AuthController {
     @GetMapping("/oauth/login")
     public ResponseEntity<?> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) {
         String accessToken = kakaoService.getAccessToken(code);
-        KakaoUserInfo kakaoUserInfo = kakaoService.getUserInfo(accessToken);
-        User user = userService.registerOrLogin(kakaoUserInfo);
+        KakaoUserResponseDto kakaoUserResponseDto = kakaoService.getUserInfo(accessToken);
+        User user = userService.registerOrLogin(kakaoUserResponseDto);
 
         String jwt = jwtProvider.generateToken(user.getUserId());
         String refreshToken = jwtProvider.generateRefreshToken(user.getUserId());
@@ -65,30 +64,24 @@ public class AuthController {
         String refreshToken = extractRefreshTokenFromCookie(request);
 
         if (refreshToken == null) {
-            System.out.println("리프레시 토큰 없음 - 예외 코드: " + ClientExceptionCode.REFRESH_TOKEN_EMPTY);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new AgodaException(ExceptionCode.REFRESH_TOKEN_EMPTY);
         }
 
-        try {
-            Long userId = jwtProvider.validateAndGetUserId(refreshToken);
-            String newAccessToken = jwtProvider.generateToken(userId);
+        Long userId = jwtProvider.validateAndGetUserId(refreshToken);
+        String newAccessToken = jwtProvider.generateToken(userId);
 
-            ResponseCookie accessCookie = ResponseCookie.from("access_token", newAccessToken)
-                    .path("/")
-                    .httpOnly(true)
-                    .secure(true)
-                    .maxAge(60 * 60) // 1시간
-                    .sameSite("Lax")
-                    .domain("localhost") // 실제 배포 시 도메인으로 변경
-                    .build();
+        ResponseCookie accessCookie = ResponseCookie.from("access_token", newAccessToken)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(60 * 60) // 1시간
+                .sameSite("Lax")
+                .domain("localhost") // 실제 배포 시 도메인으로 변경
+                .build();
 
-            response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-            return ResponseEntity.ok().build();
+        response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        return ResponseEntity.ok().build();
 
-        } catch (RuntimeException e) {
-            System.out.println("리프레시 토큰 검증 실패 - 예외 코드: " + ClientExceptionCode.UNAUTH_ERROR);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
     }
 
 
@@ -140,7 +133,7 @@ public class AuthController {
         User user = userService.getCurrentUser();
 
         return ResponseEntity.ok()
-                .body("🙋‍♀️ 현재 유저: " + user.getName() + " (id: " + user.getUserId() + ")");
+                .body("현재 유저: " + user.getName() + " (id: " + user.getUserId() + ")");
     }
 
 }

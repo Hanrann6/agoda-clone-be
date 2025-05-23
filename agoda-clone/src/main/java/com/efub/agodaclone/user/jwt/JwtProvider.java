@@ -42,16 +42,11 @@ public class JwtProvider {
     }
 
     public Long validateAndGetUserId(String token) {
-        try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(getKey()) // 고쳐야 하는 부분!
-                    .parseClaimsJws(token)
-                    .getBody();
-            return Long.valueOf(claims.getSubject());
-        } catch (Exception e) {
-            System.out.println("토큰 파싱 실패 - 예외 코드: " + ClientExceptionCode.UNAUTH_ERROR);
-            throw new RuntimeException("토큰에서 사용자 ID를 추출할 수 없습니다.");
-        }
+        Claims claims = Jwts.parser()
+                .setSigningKey(getKey())
+                .parseClaimsJws(token)
+                .getBody();
+        return Long.valueOf(claims.getSubject());
     }
 
     private SecretKey getKey() {
