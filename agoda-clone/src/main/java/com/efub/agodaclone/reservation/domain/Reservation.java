@@ -78,4 +78,11 @@ public class Reservation {
         this.phone = phone;
         this.requestedTerm = requestedTerm;
     }
+
+    public void removeReview() {
+        if (this.review != null) {
+            this.review.setReservation(null); // Review에서 역방향 끊기 (필요 시)
+            this.review = null;
+        }
+    }
 }

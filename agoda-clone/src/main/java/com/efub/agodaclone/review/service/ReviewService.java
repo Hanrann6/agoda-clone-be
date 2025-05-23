@@ -4,20 +4,24 @@ import com.efub.agodaclone.global.exception.AgodaException;
 import com.efub.agodaclone.global.exception.ExceptionCode;
 import com.efub.agodaclone.reservation.domain.Reservation;
 import com.efub.agodaclone.reservation.service.ReservationService;
+import com.efub.agodaclone.reservation.service.ReservationShareService;
 import com.efub.agodaclone.review.domain.Review;
 import com.efub.agodaclone.review.dto.request.ReviewCreateRequest;
+import com.efub.agodaclone.review.dto.request.ReviewUpdateRequest;
 import com.efub.agodaclone.review.repository.ReviewRepository;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final ReservationService reservationService;
+    private final ReservationShareService reservationService;
     private final UserService userService;
 
     @Transactional
@@ -25,15 +29,41 @@ public class ReviewService {
         User user = userService.getCurrentUser();
         Long reservationId = reviewCreateRequest.getReservationId();
         Reservation reservation = reservationService.findReservationById(reservationId);
-        authorizeWriteUser(user, reservation);
+        validateReservationOwnership(user, reservation);
         Review newReview = Review.create(reservation, reviewCreateRequest);
         reviewRepository.save(newReview);
         return newReview.getReviewId();
     }
 
-    private void authorizeWriteUser(User user, Reservation reservation){
-        if(user != reservation.getUser()){
+    @Transactional
+    public void updateReview(ReviewUpdateRequest reviewUpdateRequest, Long reviewId){
+        User user = userService.getCurrentUser();
+        Review review = getReviewById(reviewId);
+        Reservation reservation = review.getReservation();
+        validateReservationOwnership(user, reservation);
+        review.updateReview(reviewUpdateRequest);
+    }
+    @Transactional
+    public void deleteReview(Long reviewId){
+        User user = userService.getCurrentUser();
+        Review review = getReviewById(reviewId);
+        Reservation reservation = reservationService.findReservationByReview(review);
+        reservation.removeReview();
+        validateReservationOwnership(user, reservation);
+        reviewRepository.deleteById(review.getReviewId());
+    }
+
+    public void validateReservationOwnership(User user, Reservation reservation){
+        Long writerId = user.getUserId();
+        Long reserovatorId = reservationService.findUserByReservation(reservation).getUserId();
+        log.info("{} : {}", writerId, reserovatorId);
+        if(!writerId.equals(reserovatorId)){
             throw new AgodaException(ExceptionCode.UNAUTHORIZED);
         }
+    }
+
+    public Review getReviewById(Long reviewId){
+        return reviewRepository.findByReviewId(reviewId)
+                .orElseThrow(()->new AgodaException(ExceptionCode.RESOURCE_NOT_FOUND));
     }
 }
