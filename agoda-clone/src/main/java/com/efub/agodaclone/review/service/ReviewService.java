@@ -9,7 +9,6 @@ import com.efub.agodaclone.review.dto.request.ReviewCreateRequest;
 import com.efub.agodaclone.review.dto.request.ReviewUpdateRequest;
 import com.efub.agodaclone.review.repository.ReviewRepository;
 import com.efub.agodaclone.user.domain.User;
-import com.efub.agodaclone.user.repository.UserRepository;
 import com.efub.agodaclone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +23,10 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationService reservationService;
     private final UserService userService;
-    private final UserRepository userRepository;
 
 
     public Long addReview(ReviewCreateRequest reviewCreateRequest){
-        //User user = userService.getCurrentUser();
-        User user = userRepository.findByKakaoId("12345").orElse(null);
+        User user = userService.getCurrentUser();
         Long reservationId = reviewCreateRequest.getReservationId();
         Reservation reservation = reservationService.findReservationById(reservationId);
         validateReservationOwnership(user, reservation);
@@ -47,8 +44,7 @@ public class ReviewService {
     }
 
     public void deleteReview(Long reviewId){
-        //User user = userService.getCurrentUser();
-        User user = userRepository.findByKakaoId("12345").orElse(null);
+        User user = userService.getCurrentUser();
         Review review = getReviewById(reviewId);
         validateReservationOwnership(user, review.getReservation());
         reviewRepository.delete(review);
