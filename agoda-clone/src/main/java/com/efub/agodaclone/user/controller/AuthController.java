@@ -2,11 +2,14 @@ package com.efub.agodaclone.user.controller;
 
 import com.efub.agodaclone.global.exception.AgodaException;
 import com.efub.agodaclone.global.exception.ExceptionCode;
+import com.efub.agodaclone.user.domain.RefreshToken;
 import com.efub.agodaclone.user.dto.KakaoUserResponseDto;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.jwt.JwtProvider;
 import com.efub.agodaclone.user.service.KakaoService;
+import com.efub.agodaclone.user.service.RefreshTokenService;
 import com.efub.agodaclone.user.service.UserService;
+import com.efub.agodaclone.user.repository.RefreshTokenRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +19,9 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -23,6 +29,8 @@ public class AuthController {
     private final KakaoService kakaoService;
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
 
     @GetMapping("/oauth/login")
     public ResponseEntity<?> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) {
@@ -32,6 +40,9 @@ public class AuthController {
 
         String jwt = jwtProvider.generateToken(user.getUserId());
         String refreshToken = jwtProvider.generateRefreshToken(user.getUserId());
+
+        refreshTokenService.saveOrUpdate(user.getUserId(), refreshToken, LocalDateTime.now().plusDays(14));
+
 
         // 쿠키로 access_token 설정
         ResponseCookie accessCookie = ResponseCookie.from("access_token", jwt)
@@ -63,12 +74,19 @@ public class AuthController {
     public ResponseEntity<Void> reissue(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = extractRefreshTokenFromCookie(request);
 
+        // DB에서 refresh token 조회 및 검증
+        Optional<RefreshToken> savedToken = refreshTokenRepository.findByToken(refreshToken);
+        if (savedToken.isEmpty() || savedToken.get().getExpiration().isBefore(LocalDateTime.now())) {
+            throw new AgodaException(ExceptionCode.REFRESH_TOKEN_INVALID);
+        }
+
+        // DB에 있으면 사용자 ID 추출하고 access token 재발급
+        Long userId = savedToken.get().getUserId();
+        String newAccessToken = jwtProvider.generateToken(userId);
+
         if (refreshToken == null) {
             throw new AgodaException(ExceptionCode.REFRESH_TOKEN_EMPTY);
         }
-
-        Long userId = jwtProvider.validateAndGetUserId(refreshToken);
-        String newAccessToken = jwtProvider.generateToken(userId);
 
         ResponseCookie accessCookie = ResponseCookie.from("access_token", newAccessToken)
                 .path("/")

@@ -42,7 +42,7 @@ public class ReservationListResponseDto {
 
     public static ReservationListResponseDto of(Reservation upcoming, List<Reservation> completed, LocalDate today, BiFunction<Reservation, LocalDate, String> statusCalculator) {
         return ReservationListResponseDto.builder()
-                .upcoming(SingleReservation.from(upcoming, "예약 완료"))
+                .upcoming(upcoming != null ? SingleReservation.from(upcoming, "예약 완료") : null)
                 .completed(completed.stream()
                         .map(r -> SingleReservation.from(r, statusCalculator.apply(r, today)))
                         .collect(Collectors.toList())

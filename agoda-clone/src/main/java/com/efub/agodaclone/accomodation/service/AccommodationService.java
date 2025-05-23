@@ -26,7 +26,6 @@ import java.time.temporal.ChronoUnit;
 public class AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
-    private final RoomService roomService;
     private final ReviewRepository reviewRepository;
 
     // 숙소 검색 리스트
@@ -51,11 +50,10 @@ public class AccommodationService {
     // 숙소 상세 정보 조회
     public AccommodationDetailResponseDto getDetailedAccommodation(Long accommodationId){
         Accommodation accommodation = findAccommodationById(accommodationId);
-        Room room = roomService.findRoomByAccommodation(accommodation);
         int reviewCount = getReviewCount(accommodationId);
         int discountPrice = calculateDiscountPrice(accommodation.getPrice(), accommodation.getDiscountRate());
 
-        return AccommodationDetailResponseDto.from(accommodation, room, reviewCount, discountPrice);
+        return AccommodationDetailResponseDto.from(accommodation, reviewCount, discountPrice);
     }
 
     // 숙소 ID로 숙소 조회하는 함수

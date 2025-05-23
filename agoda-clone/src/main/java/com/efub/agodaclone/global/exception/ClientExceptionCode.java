@@ -15,4 +15,5 @@ public enum ClientExceptionCode {
     OAUTH_SERVER_ERROR,
     INVALID_DATE_RANGE,
     RESERVATION_NOT_FOUND,
+    REFRESH_TOKEN_INVALID
 }

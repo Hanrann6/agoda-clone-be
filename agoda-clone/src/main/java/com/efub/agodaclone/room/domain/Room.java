@@ -28,8 +28,15 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomImage> roomImageList = new ArrayList<>();
 
-    @Column(name = "room_type")
+    @Column(name = "room_type", nullable = false)
     private String roomType;
 
+    @Column(nullable = false)
     private String bed;
+
+    @Column(nullable = false)
+    private int price;
+
+    @Column(name = "discount_price", nullable = false)
+    private int discountPrice;
 }
