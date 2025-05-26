@@ -29,6 +29,7 @@ public class MyReviewSummary {
                 .location(reservation.getAccommodation().getLocation())
                 .startDate(reservation.getStartDate())
                 .endDate(reservation.getEndDate())
+                .accommodationImage(reservation.getAccommodation().getAccommodationImageList().get(0).getImgUrl())
                 .hasReviewed(reservation.getReview() != null)
                 .reviewId(reservation.getReview().getReviewId())
                 .build();

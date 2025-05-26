@@ -1,8 +1,11 @@
 package com.efub.agodaclone.accomodation.service;
 
 import com.efub.agodaclone.accomodation.domain.Accommodation;
+import com.efub.agodaclone.accomodation.dto.response.AccommodationReviewResponse;
+import com.efub.agodaclone.accomodation.dto.summary.AccommodationReviewSummary;
 import com.efub.agodaclone.global.exception.AgodaException;
 import com.efub.agodaclone.global.exception.ExceptionCode;
+import com.efub.agodaclone.review.domain.Review;
 import com.efub.agodaclone.review.repository.ReviewRepository;
 import com.efub.agodaclone.room.domain.Room;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationDetailResponseDto;
@@ -10,6 +13,8 @@ import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResp
 import com.efub.agodaclone.accomodation.repository.AccommodationRepository;
 import com.efub.agodaclone.room.repository.RoomRepository;
 import com.efub.agodaclone.room.service.RoomService;
+import com.efub.agodaclone.user.domain.User;
+import com.efub.agodaclone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,6 +33,7 @@ public class AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
     private final ReviewRepository reviewRepository;
+    private final UserService userService;
 
     // 숙소 검색 리스트
     public AccommodationSearchListResponseDto getAccommodationList(String query, LocalDate startDate, LocalDate endDate, int minPrice, int maxPrice, int page){
@@ -56,6 +63,15 @@ public class AccommodationService {
         return AccommodationDetailResponseDto.from(accommodation, reviewCount, discountPrice);
     }
 
+    // 숙소 리뷰 조회
+    public AccommodationReviewResponse getAccommodationReview(Long accommodationId, Pageable pageable){
+        double totalAverageScore = findAccommodationById(accommodationId).getTotalScore();
+        Page<Review> reviewPages = getReviewsByAccommodationId(accommodationId, pageable);
+        List<AccommodationReviewSummary> summaries = reviewPages.stream().map(AccommodationReviewSummary::to).toList();
+        Long totalReviewCount = reviewPages.getTotalElements();
+        return AccommodationReviewResponse.to(summaries, totalAverageScore, totalReviewCount);
+    }
+
     // 숙소 ID로 숙소 조회하는 함수
     public Accommodation findAccommodationById(Long accommodationId){
         return accommodationRepository.findByAccommodationId(accommodationId)
@@ -75,5 +91,10 @@ public class AccommodationService {
     // 숙소 리뷰 개수 반환하는 함수
     public int getReviewCount(Long accommodationId){
         return reviewRepository.countByAccommodationId(accommodationId);
+    }
+
+    // 숙소 리뷰 반환하는 함수
+    public Page<Review> getReviewsByAccommodationId(Long accommodationId, Pageable pageable){
+        return reviewRepository.findAllByReservation_Accommodation_AccommodationId(accommodationId, pageable);
     }
 }

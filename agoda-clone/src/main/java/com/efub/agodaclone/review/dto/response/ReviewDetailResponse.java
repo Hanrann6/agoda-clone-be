@@ -31,7 +31,7 @@ public class ReviewDetailResponse {
             return AccommodationInfo.builder()
                     .engName(accommodation.getEngName())
                     .location(accommodation.getLocation())
-                    .averageScore(accommodation.getTotalScore())
+                    .averageScore(accommodation.getTotalScore() != null ? accommodation.getTotalScore() : 0.0 / reviewCount)
                     .reviewCount(reviewCount)
                     .build();
         }
