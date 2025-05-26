@@ -25,3 +25,15 @@ kakao:
 
 jwt:
   secret-key: ${jwt.secret-key}
+cloud:
+  aws:
+    s3:
+      bucket: ${cloud.aws.s3.bucket}
+    credentials:
+      access-key: ${cloud.aws.credentials.access-key}
+      secret-key: ${cloud.aws.credentials.secret-key}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
