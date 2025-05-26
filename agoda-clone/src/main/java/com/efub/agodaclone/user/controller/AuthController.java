@@ -6,6 +6,7 @@ import com.efub.agodaclone.user.domain.RefreshToken;
 import com.efub.agodaclone.user.dto.KakaoUserResponseDto;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.jwt.JwtProvider;
+import com.efub.agodaclone.user.jwt.TokenUtil;
 import com.efub.agodaclone.user.service.KakaoService;
 import com.efub.agodaclone.user.service.RefreshTokenService;
 import com.efub.agodaclone.user.service.UserService;
@@ -43,15 +44,24 @@ public class AuthController {
 
         refreshTokenService.saveOrUpdate(user.getUserId(), refreshToken, LocalDateTime.now().plusDays(14));
 
+        // 카카오 access token 쿠키에 저장
+        ResponseCookie kakaoCookie = ResponseCookie.from("kakao_token", accessToken)
+                .path("/")
+                .httpOnly(true)
+                .secure(false) // https 배포 시 true
+                .maxAge(60 * 60) // 1시간
+                .sameSite("Lax")
+                .domain("localhost") // 배포 시 변경
+                .build();
 
         // 쿠키로 access_token 설정
         ResponseCookie accessCookie = ResponseCookie.from("access_token", jwt)
                 .path("/")
                 .httpOnly(true) // JS에서 접근 불가능하게
-                .secure(false)   // 지금은 테스트용이라 false로 해둠. 나중에 https에서는 true로!!
+                .secure(false)   // TODO: 지금은 테스트용이라 false로 해둠. 나중에 https에서는 true로!!
                 .maxAge(7 * 24 * 60 * 60)
                 .sameSite("Lax")
-                .domain("localhost") //테스트용. 실제는 배포 url로 바꿔야 됨!
+                .domain("localhost") //TODO: 테스트용. 실제는 배포 url로 바꿔야 됨!
                 .build();
 
         // refresh_token 쿠키 설정
@@ -66,6 +76,7 @@ public class AuthController {
 
         response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, kakaoCookie.toString());
 
         return ResponseEntity.ok().build();
     }
@@ -108,6 +119,13 @@ public class AuthController {
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
 
         Long userId = (Long) request.getAttribute("userId");
+        String accessToken = extractAccessTokenFromHeader(request);
+
+        // 카카오 앱 연결 해제
+        String kakaoAccessToken = TokenUtil.extractKakaoTokenFromCookie(request);
+        System.out.println("🧾 unlink에 사용한 token = " + kakaoAccessToken);
+        kakaoService.unlinkKakao(kakaoAccessToken);
+
         userService.deleteUser(userId);
 
         // access_token 쿠키 제거
@@ -128,8 +146,17 @@ public class AuthController {
                 .sameSite("Lax")
                 .build();
 
+        ResponseCookie kakaoCookie = ResponseCookie.from("kakao_token", "")
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
         response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, kakaoCookie.toString());
 
         return ResponseEntity.noContent().build(); // 204 No Content
     }
@@ -145,13 +172,22 @@ public class AuthController {
         return null;
     }
 
-    //////user service test용. 사용 후 삭제
-    @GetMapping("/user/me")
-    public ResponseEntity<?> getMyInfo() {
-        User user = userService.getCurrentUser();
-
-        return ResponseEntity.ok()
-                .body("현재 유저: " + user.getName() + " (id: " + user.getUserId() + ")");
+    private String extractAccessTokenFromHeader(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
     }
+
+
+//    //////user service test용. 사용 후 삭제
+//    @GetMapping("/user/me")
+//    public ResponseEntity<?> getMyInfo() {
+//        User user = userService.getCurrentUser();
+//
+//        return ResponseEntity.ok()
+//                .body("현재 유저: " + user.getName() + " (id: " + user.getUserId() + ")");
+//    }
 
 }
