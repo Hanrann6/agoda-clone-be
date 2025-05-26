@@ -2,7 +2,7 @@ name: Deploy to Amazon EC2
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "deploy" ]
 
 env:
   AWS_REGION: ap-northeast-2
@@ -31,14 +31,14 @@ jobs:
 
       - name: make application.yml
         run: |
-          mkdir ./blog/src/main/resources
-          cd ./blog/src/main/resources
+          mkdir ./agoda-clone/src/main/resources
+          cd ./agoda-clone/src/main/resources
           touch ./application.yml
           echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
 
       - name: Build with Gradle
         run: |
-          cd blog
+          cd agoda-clone
           chmod +x ./gradlew
           ./gradlew build -x test
 
@@ -55,7 +55,7 @@ jobs:
             --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
             --ignore-hidden-files \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
-            --source ./blog
+            --source ./agoda-clone
 
       - name: Deploy to AWS EC2 from S3
         run: |
