@@ -31,7 +31,7 @@ jobs:
 
       - name: make application.yml
         run: |
-          mkdir ./agoda-clone/src/main/resources
+          mkdir -p ./agoda-clone/src/main/resources
           cd ./agoda-clone/src/main/resources
           touch ./application.yml
           echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
