@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-PROJECT_ROOT="/home/ubuntu/app"
+PROJECT_ROOT="/home/ubuntu/agoda-clone"
 JAR_FILE="$PROJECT_ROOT/agoda-webapp.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
