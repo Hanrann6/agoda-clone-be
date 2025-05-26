@@ -9,6 +9,8 @@ import java.util.Collections;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
+//Spring Security가 로그인한 사용자의 정보를 처리
+
     private final Long id;
     private final String email;
     private final String name;

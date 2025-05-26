@@ -14,13 +14,14 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 
 @Component
-public class JwtProvider {
+public class JwtProvider { //jwt 발급
 
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    private final long expirationMs = 7 * 24 * 60 * 60 * 1000; //TODO: 일주일로 설정함. 나중에는 1시간 3600000
+    private final long expirationMs = 36000000; //10시간
 
+    //사용자의 id를 받아 access token 발급
     public String generateToken(Long userId) {
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
@@ -41,6 +42,7 @@ public class JwtProvider {
                 .compact();
     }
 
+    //jwt 서명 검증
     public Long validateAndGetUserId(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(getKey())

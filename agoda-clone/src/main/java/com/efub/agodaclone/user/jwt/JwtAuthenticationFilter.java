@@ -7,7 +7,6 @@ import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +22,20 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    //Spring Security에서 JWT 인증을 수행
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
 
+    //모든 요청마다 수행
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String token = extractTokenFromHeaderOrCookie(request);
+        String token = TokenUtil.extractTokenFromHeaderOrCookie(request); //토큰 추출
 
+        // toke 유효성 검사 후 사용자 조회
         if (token != null) {
             Long userId = jwtProvider.validateAndGetUserId(token);
 
@@ -51,20 +53,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String extractTokenFromHeaderOrCookie(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7);
-        }
 
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals("access_token")) {
-                    return cookie.getValue();
-                }
-            }
-        }
-
-        return null;
-    }
 }
