@@ -15,9 +15,10 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    // refresh token을 db에 갱신
     @Transactional
     public void saveOrUpdate(Long userId, String token, LocalDateTime expiration) {
-        refreshTokenRepository.deleteByUserId(userId);
+        refreshTokenRepository.deleteByUserId(userId); //기존 토큰 삭제
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUserId(userId);
@@ -27,7 +28,4 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
-    }
 }
