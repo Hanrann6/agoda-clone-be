@@ -1,11 +1,15 @@
 package com.efub.agodaclone.accomodation.controller;
 
 import com.efub.agodaclone.accomodation.dto.response.AccommodationDetailResponseDto;
+import com.efub.agodaclone.accomodation.dto.response.AccommodationReviewResponse;
 import com.efub.agodaclone.accomodation.dto.response.AccommodationSearchListResponseDto;
 import com.efub.agodaclone.accomodation.service.AccommodationService;
 import com.efub.agodaclone.room.dto.RoomListResponseDto;
 import com.efub.agodaclone.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +48,13 @@ public class AccommodationController {
     public ResponseEntity<RoomListResponseDto> getAccommodationRooms(@PathVariable("accommodationId") Long accommodationId){
         RoomListResponseDto responseDto = roomService.getRoomList(accommodationId);
         return ResponseEntity.ok(responseDto);
+    }
+
+    // 숙소 리뷰 조회
+    @GetMapping("/{accommodationId}/reviews")
+    public ResponseEntity<AccommodationReviewResponse> getAccommodationReviews(@PathVariable("accommodationId") Long accommodationId,
+                                                                               @PageableDefault(size = 4, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(accommodationService.getAccommodationReview(accommodationId, pageable));
     }
 
 }

@@ -36,16 +36,16 @@ public class Accommodation {
     private int discountRate;
 
     @Column(name = "total_score")
-    private double totalScore;
+    private Double totalScore = 0.0;
 
     @Column(name = "cleanliness_score")
-    private double cleanlinessScore;
+    private double cleanlinessScore = 0.0;
 
     @Column(name = "service_score")
-    private double serviceScore;
+    private double serviceScore = 0.0;
 
     @Column(name = "location_score")
-    private double locationScore;
+    private double locationScore = 0.0;
 
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> roomList = new ArrayList<>();
@@ -58,4 +58,11 @@ public class Accommodation {
 
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservationList = new ArrayList<>();
+
+    public void updateScores(double avgClean, double avgService, double avgLocation, double totalAvg) {
+        this.cleanlinessScore = avgClean;
+        this.serviceScore = avgService;
+        this.locationScore = avgLocation;
+        this.totalScore = totalAvg;
+    }
  }
