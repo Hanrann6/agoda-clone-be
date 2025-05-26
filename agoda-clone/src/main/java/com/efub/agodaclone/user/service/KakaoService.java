@@ -23,6 +23,7 @@ public class KakaoService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
+    // 카카오 인가 코드로 access token 발급
     public String getAccessToken(String code) {
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
 
@@ -58,6 +59,7 @@ public class KakaoService {
         return response.getBody();
     }
 
+    //카카오 앱 연결 해체 요청
     public void unlinkKakao(String kakaoAccessToken) {
         if (kakaoAccessToken == null) {
             System.out.println("kakaoAccessToken is null");

@@ -11,10 +11,10 @@ import com.efub.agodaclone.user.service.KakaoService;
 import com.efub.agodaclone.user.service.RefreshTokenService;
 import com.efub.agodaclone.user.service.UserService;
 import com.efub.agodaclone.user.repository.RefreshTokenRepository;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -33,35 +33,39 @@ public class AuthController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final RefreshTokenService refreshTokenService;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+    //카카오 로그인
     @GetMapping("/oauth/login")
     public ResponseEntity<?> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) {
-        String accessToken = kakaoService.getAccessToken(code);
-        KakaoUserResponseDto kakaoUserResponseDto = kakaoService.getUserInfo(accessToken);
-        User user = userService.registerOrLogin(kakaoUserResponseDto);
+        String accessToken = kakaoService.getAccessToken(code); //인가 코드로 access token 발급
+        KakaoUserResponseDto kakaoUserResponseDto = kakaoService.getUserInfo(accessToken); //사용자 정보 조회
+        User user = userService.registerOrLogin(kakaoUserResponseDto); // 사용자 등록
 
-        String jwt = jwtProvider.generateToken(user.getUserId());
-        String refreshToken = jwtProvider.generateRefreshToken(user.getUserId());
+        String jwt = jwtProvider.generateToken(user.getUserId()); //jwt token 생성
+        String refreshToken = jwtProvider.generateRefreshToken(user.getUserId()); //jwt refresh token 생성
 
         refreshTokenService.saveOrUpdate(user.getUserId(), refreshToken, LocalDateTime.now().plusDays(14));
 
-        // 카카오 access token 쿠키에 저장
+        // 카카오 token을 쿠키에 저장
         ResponseCookie kakaoCookie = ResponseCookie.from("kakao_token", accessToken)
                 .path("/")
                 .httpOnly(true)
-                .secure(false) // https 배포 시 true
+                .secure(true) // https 환경 true
                 .maxAge(60 * 60) // 1시간
                 .sameSite("Lax")
-                .domain("localhost") // 배포 시 변경
+                .domain(frontendUrl.replace("https://", "").replace("http://", ""))
                 .build();
 
         // 쿠키로 access_token 설정
         ResponseCookie accessCookie = ResponseCookie.from("access_token", jwt)
                 .path("/")
                 .httpOnly(true) // JS에서 접근 불가능하게
-                .secure(false)   // TODO: 지금은 테스트용이라 false로 해둠. 나중에 https에서는 true로!!
+                .secure(true)   // https 환경 true
                 .maxAge(7 * 24 * 60 * 60)
                 .sameSite("Lax")
-                .domain("localhost") //TODO: 테스트용. 실제는 배포 url로 바꿔야 됨!
+                .domain(frontendUrl.replace("https://", "").replace("http://", ""))
                 .build();
 
         // refresh_token 쿠키 설정
@@ -71,7 +75,7 @@ public class AuthController {
                 .secure(true)
                 .maxAge(14 * 24 * 60 * 60) // 예: 14일
                 .sameSite("Lax")
-                .domain("localhost")
+                .domain(frontendUrl.replace("https://", "").replace("http://", ""))
                 .build();
 
         response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
@@ -81,9 +85,10 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    // Access Token 재발급
     @PostMapping("/oauth/reissue")
     public ResponseEntity<Void> reissue(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = extractRefreshTokenFromCookie(request);
+        String refreshToken = TokenUtil.extractRefreshTokenFromCookie(request); //쿠키에서 refresh token 추출
 
         // DB에서 refresh token 조회 및 검증
         Optional<RefreshToken> savedToken = refreshTokenRepository.findByToken(refreshToken);
@@ -99,6 +104,7 @@ public class AuthController {
             throw new AgodaException(ExceptionCode.REFRESH_TOKEN_EMPTY);
         }
 
+        // 새 access token 쿠키로 설정
         ResponseCookie accessCookie = ResponseCookie.from("access_token", newAccessToken)
                 .path("/")
                 .httpOnly(true)
@@ -113,19 +119,17 @@ public class AuthController {
 
     }
 
-
-
+    // 로그아웃
     @DeleteMapping("/oauth/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
 
         Long userId = (Long) request.getAttribute("userId");
-        String accessToken = extractAccessTokenFromHeader(request);
 
         // 카카오 앱 연결 해제
         String kakaoAccessToken = TokenUtil.extractKakaoTokenFromCookie(request);
-        System.out.println("🧾 unlink에 사용한 token = " + kakaoAccessToken);
         kakaoService.unlinkKakao(kakaoAccessToken);
 
+        //DB에서 유저 삭제
         userService.deleteUser(userId);
 
         // access_token 쿠키 제거
@@ -146,6 +150,7 @@ public class AuthController {
                 .sameSite("Lax")
                 .build();
 
+        // kakao token 쿠키 제거
         ResponseCookie kakaoCookie = ResponseCookie.from("kakao_token", "")
                 .path("/")
                 .httpOnly(true)
@@ -158,36 +163,7 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, kakaoCookie.toString());
 
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build(); // 204 No Content 반환
     }
-
-    private String extractRefreshTokenFromCookie(HttpServletRequest request) {
-        if (request.getCookies() == null) return null;
-
-        for (Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals("refresh_token")) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
-
-    private String extractAccessTokenFromHeader(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7);
-        }
-        return null;
-    }
-
-
-//    //////user service test용. 사용 후 삭제
-//    @GetMapping("/user/me")
-//    public ResponseEntity<?> getMyInfo() {
-//        User user = userService.getCurrentUser();
-//
-//        return ResponseEntity.ok()
-//                .body("현재 유저: " + user.getName() + " (id: " + user.getUserId() + ")");
-//    }
 
 }

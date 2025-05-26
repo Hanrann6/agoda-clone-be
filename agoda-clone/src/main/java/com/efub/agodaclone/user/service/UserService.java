@@ -20,6 +20,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
+    //사용자 로그인/회원가입
     public User registerOrLogin(KakaoUserResponseDto kakaoUserResponseDto) {
         String kakaoId = String.valueOf(kakaoUserResponseDto.getId());
         Optional<User> userOptional = userRepository.findByKakaoId(kakaoId);
@@ -37,9 +38,10 @@ public class UserService {
         }
     }
 
+    //Security Context에 저장된 사용자 정보로부터 User 엔티티 조회
     @Transactional(readOnly = true)
     public User getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication(); //인증 객체 가져옴
 
         if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
             throw new RuntimeException(ClientExceptionCode.UNAUTHORIZED.name());
@@ -54,6 +56,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException(ClientExceptionCode.RESOURCE_NOT_FOUND.name()));
     }
 
+    //사용자 삭제
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
