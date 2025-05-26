@@ -22,7 +22,18 @@ kakao:
   client-id: ${kakao.client-id}
   redirect-uri: ${kakao.redirect-uri}
   javascript-key: ${kakao.javascript-key}
+
 jwt:
   secret-key: ${jwt.secret-key}
-frontend:
-  url: ${frontend.url}
+cloud:
+  aws:
+    s3:
+      bucket: ${cloud.aws.s3.bucket}
+    credentials:
+      access-key: ${cloud.aws.credentials.access-key}
+      secret-key: ${cloud.aws.credentials.secret-key}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false

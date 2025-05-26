@@ -1,13 +1,17 @@
 package com.efub.agodaclone.review.service;
 
+import com.efub.agodaclone.accomodation.domain.Accommodation;
+import com.efub.agodaclone.accomodation.service.AccommodationService;
 import com.efub.agodaclone.global.exception.AgodaException;
 import com.efub.agodaclone.global.exception.ExceptionCode;
 import com.efub.agodaclone.reservation.domain.Reservation;
-import com.efub.agodaclone.reservation.service.ReservationService;
 import com.efub.agodaclone.reservation.service.ReservationShareService;
 import com.efub.agodaclone.review.domain.Review;
 import com.efub.agodaclone.review.dto.request.ReviewCreateRequest;
 import com.efub.agodaclone.review.dto.request.ReviewUpdateRequest;
+import com.efub.agodaclone.review.dto.response.MyReviewResponse;
+import com.efub.agodaclone.review.dto.response.ReviewDetailResponse;
+import com.efub.agodaclone.review.dto.summary.MyReviewSummary;
 import com.efub.agodaclone.review.repository.ReviewRepository;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.service.UserService;
@@ -16,6 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +30,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationShareService reservationService;
     private final UserService userService;
+    private final AccommodationService accommodationService;
+    private final AccommodationScoreUpdater scoreUpdater;
 
     @Transactional
     public Long addReview(ReviewCreateRequest reviewCreateRequest){
@@ -32,6 +41,10 @@ public class ReviewService {
         validateReservationOwnership(user, reservation);
         Review newReview = Review.create(reservation, reviewCreateRequest);
         reviewRepository.save(newReview);
+
+        Accommodation accommodation = reservation.getAccommodation();
+        scoreUpdater.updateAccommodationScore(accommodation);
+
         return newReview.getReviewId();
     }
 
@@ -42,6 +55,9 @@ public class ReviewService {
         Reservation reservation = review.getReservation();
         validateReservationOwnership(user, reservation);
         review.updateReview(reviewUpdateRequest);
+
+        Accommodation accommodation = reservation.getAccommodation();
+        scoreUpdater.updateAccommodationScore(accommodation);
     }
     @Transactional
     public void deleteReview(Long reviewId){
@@ -51,9 +67,37 @@ public class ReviewService {
         reservation.removeReview();
         validateReservationOwnership(user, reservation);
         reviewRepository.deleteById(review.getReviewId());
+
+        Accommodation accommodation = reservation.getAccommodation();
+        scoreUpdater.updateAccommodationScore(accommodation);
     }
 
-    public void validateReservationOwnership(User user, Reservation reservation){
+    @Transactional(readOnly = true)
+    public ReviewDetailResponse getReviewDetail(Long reviewId){
+        User user = userService.getCurrentUser();
+        Review review = getReviewById(reviewId);
+        Reservation reservation = reservationService.findReservationByReview(review);
+        Accommodation accommodation = reservation.getAccommodation();
+        int reviewCount = accommodationService.getReviewCount(accommodation.getAccommodationId());
+        return ReviewDetailResponse.builder()
+                .accommodation(ReviewDetailResponse.AccommodationInfo.from(accommodation, reviewCount))
+                .reservation(ReviewDetailResponse.ReservationInfo.from(reservation))
+                .review(ReviewDetailResponse.ReviewInfo.from(review))
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public MyReviewResponse getMyReview(){
+        User user = userService.getCurrentUser();
+        List<Reservation> reservations = reservationService.findReservationByUser(user);
+        List<MyReviewSummary> myReviewSummaries = reservations.stream().map(MyReviewSummary::from).toList();
+        return MyReviewResponse.builder()
+                .reservations(myReviewSummaries)
+                .build();
+    }
+
+
+    private void validateReservationOwnership(User user, Reservation reservation){
         Long writerId = user.getUserId();
         Long reserovatorId = reservationService.findUserByReservation(reservation).getUserId();
         log.info("{} : {}", writerId, reserovatorId);
@@ -62,7 +106,7 @@ public class ReviewService {
         }
     }
 
-    public Review getReviewById(Long reviewId){
+    private Review getReviewById(Long reviewId){
         return reviewRepository.findByReviewId(reviewId)
                 .orElseThrow(()->new AgodaException(ExceptionCode.RESOURCE_NOT_FOUND));
     }
