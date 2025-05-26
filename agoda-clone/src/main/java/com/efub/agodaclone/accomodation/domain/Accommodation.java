@@ -58,4 +58,11 @@ public class Accommodation {
 
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservationList = new ArrayList<>();
+
+    public void updateScores(double avgClean, double avgService, double avgLocation, double totalAvg) {
+        this.cleanlinessScore = avgClean;
+        this.serviceScore = avgService;
+        this.locationScore = avgLocation;
+        this.totalScore = totalAvg;
+    }
  }

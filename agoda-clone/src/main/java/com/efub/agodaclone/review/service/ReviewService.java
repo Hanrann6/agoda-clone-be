@@ -31,6 +31,7 @@ public class ReviewService {
     private final ReservationShareService reservationService;
     private final UserService userService;
     private final AccommodationService accommodationService;
+    private final AccommodationScoreUpdater scoreUpdater;
 
     @Transactional
     public Long addReview(ReviewCreateRequest reviewCreateRequest){
@@ -40,6 +41,10 @@ public class ReviewService {
         validateReservationOwnership(user, reservation);
         Review newReview = Review.create(reservation, reviewCreateRequest);
         reviewRepository.save(newReview);
+
+        Accommodation accommodation = reservation.getAccommodation();
+        scoreUpdater.updateAccommodationScore(accommodation);
+
         return newReview.getReviewId();
     }
 
@@ -50,6 +55,9 @@ public class ReviewService {
         Reservation reservation = review.getReservation();
         validateReservationOwnership(user, reservation);
         review.updateReview(reviewUpdateRequest);
+
+        Accommodation accommodation = reservation.getAccommodation();
+        scoreUpdater.updateAccommodationScore(accommodation);
     }
     @Transactional
     public void deleteReview(Long reviewId){
@@ -59,6 +67,9 @@ public class ReviewService {
         reservation.removeReview();
         validateReservationOwnership(user, reservation);
         reviewRepository.deleteById(review.getReviewId());
+
+        Accommodation accommodation = reservation.getAccommodation();
+        scoreUpdater.updateAccommodationScore(accommodation);
     }
 
     @Transactional(readOnly = true)

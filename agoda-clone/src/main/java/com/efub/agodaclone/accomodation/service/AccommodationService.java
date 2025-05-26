@@ -16,6 +16,7 @@ import com.efub.agodaclone.room.service.RoomService;
 import com.efub.agodaclone.user.domain.User;
 import com.efub.agodaclone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
@@ -68,6 +70,8 @@ public class AccommodationService {
         double totalAverageScore = findAccommodationById(accommodationId).getTotalScore();
         Page<Review> reviewPages = getReviewsByAccommodationId(accommodationId, pageable);
         List<AccommodationReviewSummary> summaries = reviewPages.stream().map(AccommodationReviewSummary::to).toList();
+        log.info("summaries: {}",reviewPages.getContent().size());
+        log.info("page: {}", reviewPages.getNumber());
         Long totalReviewCount = reviewPages.getTotalElements();
         return AccommodationReviewResponse.to(summaries, totalAverageScore, totalReviewCount);
     }
