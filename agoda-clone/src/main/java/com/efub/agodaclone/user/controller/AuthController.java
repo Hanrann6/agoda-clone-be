@@ -55,7 +55,6 @@ public class AuthController {
                 .secure(true) // https 환경 true
                 .maxAge(60 * 60) // 1시간
                 .sameSite("Lax")
-                .domain(frontendUrl.replace("https://", "").replace("http://", ""))
                 .build();
 
         // 쿠키로 access_token 설정
@@ -65,7 +64,6 @@ public class AuthController {
                 .secure(true)   // https 환경 true
                 .maxAge(7 * 24 * 60 * 60)
                 .sameSite("Lax")
-                .domain(frontendUrl.replace("https://", "").replace("http://", ""))
                 .build();
 
         // refresh_token 쿠키 설정
@@ -75,7 +73,6 @@ public class AuthController {
                 .secure(true)
                 .maxAge(14 * 24 * 60 * 60) // 예: 14일
                 .sameSite("Lax")
-                .domain(frontendUrl.replace("https://", "").replace("http://", ""))
                 .build();
 
         response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
@@ -111,7 +108,6 @@ public class AuthController {
                 .secure(true)
                 .maxAge(60 * 60) // 1시간
                 .sameSite("Lax")
-                .domain("localhost") // 실제 배포 시 도메인으로 변경
                 .build();
 
         response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
