@@ -30,7 +30,8 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/**",
+                                "/**"
+                                //,
                                 // "/index.html",
                                 // "/kakao-login.html",
                                 // "/oauth/reissue",
