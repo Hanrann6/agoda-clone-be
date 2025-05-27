@@ -31,20 +31,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/**",
-                                "/index.html",
-                                "/kakao-login.html",
-                                "/oauth/reissue",
-                                "/oauth/login",
-                                "/css/**", "/js/**", "/images/**",
-                                "/favicon.ico", "/static/**", "/assets/**",
+                                // "/index.html",
+                                // "/kakao-login.html",
+                                // "/oauth/reissue",
+                                // "/oauth/login",
+                                // "/css/**", "/js/**", "/images/**",
+                                // "/favicon.ico", "/static/**", "/assets/**",
 
-                                //인증 없이 접근 가능한 api
-                                "/accommodations",
-                                "/accommodations/*",
-                                "/accommodations/*/rooms",
-                                "/rooms/*",
-                                "/accommodations/*/reviews",
-                                "/reviews/*"
+                                // //인증 없이 접근 가능한 api
+                                // "/accommodations",
+                                // "/accommodations/*",
+                                // "/accommodations/*/rooms",
+                                // "/rooms/*",
+                                // "/accommodations/*/reviews",
+                                // "/reviews/*"
                         ).permitAll()
                         .anyRequest().authenticated()
 
