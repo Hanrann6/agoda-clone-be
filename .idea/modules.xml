@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/agoda-clone-be.iml" filepath="$PROJECT_DIR$/.idea/agoda-clone-be.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/agoda-clone.main.iml" filepath="$PROJECT_DIR$/.idea/modules/agoda-clone.main.iml" />
     </modules>
   </component>
 </project>
