@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Getter @Builder
 public class AccommodationSummary {
 
+    private Long accommodationId;
     private String korName;
     private String engName;
     private int star;
@@ -27,6 +28,7 @@ public class AccommodationSummary {
     public static AccommodationSummary from(Accommodation accommodation, int reviewCount, int discountPrice, int days) {
         AccommodationImage accommodationImage = accommodation.getAccommodationImageList().get(0); // 대표 이미지 1개만 사용
         return AccommodationSummary.builder()
+                .accommodationId(accommodation.getAccommodationId())
                 .korName(accommodation.getKorName())
                 .engName(accommodation.getEngName())
                 .star(accommodation.getStar())
