@@ -60,7 +60,7 @@ public class ReviewDetailResponse {
         private int serviceScore;
         private String reviewText;
         private List<String> reviewImages;
-        private LocalDateTime createdAt;
+        private LocalDate createdAt;
 
         public static ReviewInfo from(Review review){
             return ReviewInfo.builder()
@@ -73,7 +73,7 @@ public class ReviewDetailResponse {
                             review.getReviewImages()
                                     .stream().map(ReviewImage::getReviewImage)
                                     .toList())
-                    .createdAt(review.getCreatedAt())
+                    .createdAt(review.getCreatedAt().toLocalDate())
                     .build();
         }
     }
