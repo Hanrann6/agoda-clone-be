@@ -7,8 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+
 
 @Configuration
 @EnableWebSecurity
@@ -21,18 +24,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .formLogin(AbstractHttpConfigurer::disable) //자체 로그인 끔
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/kakao-login.html",
-                                "/oauth/reissue",
-                                "/oauth/login",
-                                "/css/**", "/js/**", "/images/**"
+                                "/**"
+                                //,
+                                // "/index.html",
+                                // "/kakao-login.html",
+                                // "/oauth/reissue",
+                                // "/oauth/login",
+                                // "/css/**", "/js/**", "/images/**",
+                                // "/favicon.ico", "/static/**", "/assets/**",
+
+                                // //인증 없이 접근 가능한 api
+                                // "/accommodations",
+                                // "/accommodations/*",
+                                // "/accommodations/*/rooms",
+                                // "/rooms/*",
+                                // "/accommodations/*/reviews",
+                                // "/reviews/*"
                         ).permitAll()
-                        .requestMatchers("/oauth/logout").authenticated()
                         .anyRequest().authenticated()
+
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

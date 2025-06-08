@@ -16,8 +16,7 @@ spring.devtools.restart.enabled: false
 
 cors:
   allow-origins:
-    - "http://localhost:5173"
-    - "http://localhost:8080"
+    - "*"
 kakao:
   client-id: ${kakao.client-id}
   redirect-uri: ${kakao.redirect-uri}
